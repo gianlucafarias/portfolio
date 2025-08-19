@@ -58,19 +58,7 @@ export default function ProjectsList() {
                                 </svg>
                             </div>
                             
-                            {/* Project Image */}
-                            {item.image && (
-                                <div className="border-2 border-base-content/10 rounded-xl overflow-hidden">
-                                    <Image
-                                        src={item.image}
-                                        alt={item.title}
-                                        width={400}
-                                        height={200}
-                                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                    />
-                                </div>
-                            )}
+                           
                             
                             <p className="text-base-content/80 text-sm sm:text-base">
                                 {item.description}

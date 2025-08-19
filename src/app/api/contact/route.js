@@ -1,18 +1,32 @@
 import { google } from "googleapis";
-import keys from "../../../../spreadsheet-keys.json";
+
+
+const credentials = {
+    type: process.env.GOOGLE_SERVICE_ACCOUNT_TYPE,
+    project_id: process.env.GOOGLE_PROJECT_ID,
+    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    auth_uri: process.env.GOOGLE_AUTH_URI,
+    token_uri: process.env.GOOGLE_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
+    universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
+  };
 
 export async function POST(request) {
   try {
     const { name, email, message } = await request.json();
 
     const auth = await google.auth.getClient({
-      projectId: keys.project_id,
+      projectId: credentials.project_id,
       credentials: {
         type: "service_account",
-        private_key: keys.private_key,
-        client_email: keys.client_email,
-        client_id: keys.client_id,
-        token_url: keys.token_uri,
+        private_key: credentials.private_key,
+        client_email: credentials.client_email,
+        client_id: credentials.client_id,
+        token_url: credentials.token_uri,
         universe_domain: "googleapis.com",
       },
       scopes: [
