@@ -21,7 +21,7 @@ export default function About() {
                         >
                             Mail
                         </a>{" "}
-                        y te responderé lo antes posible.
+                        y te respondo al toque.
                     </p>
                     
                 </div>
