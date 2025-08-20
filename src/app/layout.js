@@ -24,9 +24,8 @@ export default function RootLayout({ children }) {
                 <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
             </head>
             <body
-                className={`antialiased overflow-auto min-h-screen bg-gradient-to-l from-teal-100/80  to-white dark:bg-gradient-to-l dark:from-teal-950 dark:to-black`}
-            >
-                <div className="w-[100%] md:w-[700px] m-auto">
+className={`antialiased overflow-auto min-h-screen bg-radial-[at_5%_5%] from-teal-100 via-blue-50 to-white dark:bg-radial-[at_5%_5%] dark:from-teal-900 dark:via-slate-800 dark:to-black`}>               
+ <div className="w-[100%] md:w-[700px] m-auto">
                     <Navbar />
                     {children}
                     <Footer />
