@@ -1,0 +1,149 @@
+{
+  "nav": {
+    "about": "About me",
+    "projects": "Projects",
+    "experience": "Experience",
+    "contact": "Contact"
+  },
+  "sections": {
+    "education": "Education & Certifications",
+    "downloadCV": "Download CV",
+    "viewAll": "View all"
+  },
+  "profile": {
+    "name": "Gianluca Palmier",
+    "role": "University Programming Technician - Full Stack Developer",
+    "about": "Full Stack Developer with 3+ years of experience developing web and mobile solutions for both public and private sectors. Specialized in React, Angular, Node.js, and PostgreSQL databases. I have implemented AI-powered systems (OpenAI), native mobile applications (React Native), and cloud solutions (Firebase, AWS). My experience includes government-funded projects and production applications for the Government of Ceres City. I'm seeking opportunities to apply my expertise in modern technologies and contribute with scalable solutions.",
+    "email": "palmiergianluca@gmail.com",
+    "projectInvitation": "Have a project in mind? Send me an",
+    "emailText": "Email",
+    "responseText": "and I'll get back to you right away."
+  },
+  "seo": {
+    "title": "Gianluca Palmier | University Technician in Programming - Full Stack Developer",
+    "description": "Full-Stack developer with practical experience in web application development using frameworks like React and Angular, along with tools like Next.js and Node. I quickly adapt to new challenges and seek to contribute efficient solutions that improve processes in concrete ways.",
+    "keywords": "portfolio, web developer, Next.js, developer portfolio, minimal portfolio"
+  },
+  "projects": {
+    "pinned": "Featured Projects",
+    "other": "Other Projects",
+    "viewProject": "View Project",
+    "viewCode": "View Code",
+    "pinProjects": [
+      {
+        "title": "MenteSana.app",
+        "description": "We developed a web platform for teenagers aimed at promoting information and events related to mental health. We implemented a personal space where users log their daily emotions and receive personalized messages with artificial intelligence. The project received funding from the \"Eureka\" program.",
+        "shortDescription": "Web platform for teenagers about mental health with personalized AI and daily emotional tracking.",
+        "tags": ["CSS", "React", "Vite", "Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI"],
+        "link": "https://mentesana.app/",
+        "github": "https://github.com/gianlucafarias/mentesana-app",
+        "image": "/projects/mentesana.png"
+      },
+      {
+        "title": "La Max Stream - Android & iOS App",
+        "description": "Development of a native application for Maxima FM 95.5 media. I implemented a live streaming system for both audio and video, plus the ability to view on-demand content. The app was developed in React Native with Expo and distributed on Play Store and App Store.",
+        "shortDescription": "Native app for live radio and video streaming with on-demand content, available on Play Store and App Store.",
+        "tags": ["React Native", "Expo", "Typescript", "Firebase"],
+        "link": "https://play.google.com/store/apps/details?id=com.maximaceres.app",
+        "github": "https://github.com/gianlucafarias/max-stream-app",
+        "image": "/projects/maximaapp.png"
+      },
+      {
+        "title": "Incubadora del NOC - XAcademy Final Project",
+        "description": "I implemented the Login and Registration functionalities in the backend, integrating with Firebase as the authentication provider. Additionally, I developed the admin panel module for teachers and administrators in the frontend, using Angular and Material, which facilitated Course management and Access control.",
+        "shortDescription": "Firebase authentication system and administrative panel for course management and access control.",
+        "tags": ["Angular", "Material", "Firebase", "Node.js", "Express", "PostgreSQL", "Tailwind"],
+        "link": "https://github.com/gianlucafarias/xacademy3-back",
+        "github": "https://github.com/gianlucafarias/xacademy3-back",
+        "image": "/projects/incubadora.jpeg"
+      }
+    ],
+    "otherProjects": [
+      {
+        "title": "ArquiTrack - Final Career Project",
+        "description": "Project presented for the Professional Practice subject of the University Programming Technician degree. The project consists of a construction project management system, where you can create, edit and delete tasks, visits, upload files and invite collaborators.",
+        "shortDescription": "Complete construction project management system with tasks, visits, files and team collaboration.",
+        "tags": ["Angular", "Material", "Firebase", "Node.js", "Express", "PostgreSQL"],
+        "link": "https://www.linkedin.com/posts/gianlucafarias_fullstack-angular-material-activity-7361002158894256130-Z8xc?utm_source=share&utm_medium=member_desktop&rcm=ACoAADSZdkkBDY4aRSUwemY2Xa6WfCsTppcfgA",
+        "github": "https://github.com/gianlucafarias/arquitrack-front",
+        "image": "/projects/arquitrack.png"
+      },
+      {
+        "title": "Ceresito - Government of Ceres City Chatbot",
+        "description": "Development of a chatbot for the Government of the City of Ceres, using Node.js, Express, PostgreSQL, Tailwind and OpenAI. The chatbot is capable of answering questions about the city and services offered by the government, plus it can send complaints. Additionally, a dashboard developed in Nextjs was implemented for complaint management.",
+        "shortDescription": "Intelligent chatbot for citizen services with OpenAI AI, integrated with WhatsApp and management dashboard.",
+        "tags": ["Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI", "Whatsapp API", "Langchain", "Nextjs", "Shadcn"],
+        "link": "https://bit.ly/holaceresito",
+        "github": "",
+        "image": "/projects/ceresito.png"
+      },
+      {
+        "title": "Survey - 2026 Works Plan",
+        "description": "Web platform for Ceres residents to participate in the 2026 Works Plan survey.",
+        "shortDescription": "Citizen participation platform for municipal works plan surveys with voting system.",
+        "tags": ["Astro", "Tailwind", "Node Js", "Express", "Redis", "Typescript", "Docker", "PostgreSQL", "Firebase"],
+        "link": "https://encuesta.ceres.gob.ar/",
+        "github": "",
+        "image": "/projects/encuesta.jpeg"
+      },
+      {
+        "title": "Club Central Argentino Olímpico - Official Website",
+        "description": "Project in development. Official website of Club Central Argentino Olímpico. A login and registration system for members was implemented, where they can pay their membership fee through Mercado Pago.",
+        "shortDescription": "Official club website with membership system and online payments integrated with Mercado Pago.",
+        "tags": ["Next Js", "Tailwind", "Node Js", "Express", "PostgreSQL", "Firebase", "Mercado Pago SDK"],
+        "link": "https://central-web-rose.vercel.app/",
+        "github": "",
+        "image": "/projects/arquitrack.png"
+      }
+    ]
+  },
+  "experience": [
+    {
+      "title": "Full Stack Developer - Government of Ceres City",
+      "description": "Develop complete web solutions for the modernization area, covering internal and external applications. Responsible for the entire development cycle: requirements gathering, design, development, deployment and maintenance. Reduced external service dependencies by implementing own solutions.",
+      "date": "01/04/2024 - Currently"
+    },
+    {
+      "title": "Motion Graphic Designer - Government of Ceres City",
+      "description": "Creation of graphic animations and advertising spots for the city government using After Effects and Premiere. Development of visual content for institutional communication campaigns.",
+      "date": "01/05/2021 - 01/04/2024"
+    },
+    {
+      "title": "Wordpress Developer - CeresCiudad.com",
+      "description": "Design, development and maintenance of the Ceres Ciudad news website. Implementation of custom functionalities and site performance optimization.",
+      "date": "01/12/2019 - 01/04/2021"
+    }
+  ],
+  "education": [
+    {
+      "title": "AWS Cloud Fundamentals",
+      "institution": "Argentina Talento Cloud",
+      "date": "06/08/2025"
+    },
+    {
+      "title": "University Programming Technician",
+      "institution": "Universidad Tecnológica Nacional - Facultad Regional Rafaela",
+      "date": "01/01/2023 - 28/07/2025"
+    },
+    {
+      "title": "XAcademy DEV",
+      "institution": "Technology With Purpose",
+      "date": "01/06/2024 - 01/03/2025"
+    }
+  ],
+  "contact": {
+    "title": "Contact",
+    "description": "Have a project in mind? Let's talk!",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "send": "Send"
+    },
+    "messages": {
+      "sending": "Sending...",
+      "error": "Error sending message",
+      "success": "Message sent successfully"
+    }
+  }
+}

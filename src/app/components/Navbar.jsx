@@ -2,18 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
-// import { Languages } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Languages } from "lucide-react";
 
 export default function Navbar() {
     const [hideOnMobile, setHideOnMobile] = useState(true);
-    const pathname = usePathname();
-    // const blogs = pathname === "/blogs";
+    const { messages, changeLanguage, isEnglish } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
 
     return (
         <>
             <div className="flex justify-center sticky top-2 items-center gap-[25px] w-full z-10">
-           
+               
                 <div className="w-[80%] sm:w-[80%] border-1 flex items-center sm:justify-center justify-between bg-gray-10/50 backdrop-blur-sm rounded-4xl py-3 px-4">
                 <span className="sm:hidden">
                                     Gianluca.dev
@@ -31,34 +32,34 @@ export default function Navbar() {
                                 
                                 <li>
                                     <Link
-                                        href="/#about"
+                                        href={isEnglish ? "/en/#about" : "/#about"}
                                         className="hover:underline"
                                     >
-                                        Sobre mi
+                                        {messages?.nav?.about || "Sobre mi"}
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        href="/#projects"
+                                        href={isEnglish ? "/en/#projects" : "/#projects"}
                                         className="hover:underline"
                                     >
-                                        Proyectos
+                                        {messages?.nav?.projects || "Proyectos"}
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        href="/#experience"
+                                        href={isEnglish ? "/en/#experience" : "/#experience"}
                                         className="hover:underline"
                                     >
-                                        Experiencia
+                                        {messages?.nav?.experience || "Experiencia"}
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        href="/contact"
+                                        href={isEnglish ? "/en/contact" : "/contact"}
                                         className="hover:underline"
                                     >
-                                     Contacto
+                                     {messages?.nav?.contact || "Contacto"}
                                     </Link>
                                 </li>
                             </ul>
@@ -66,27 +67,13 @@ export default function Navbar() {
                             
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
-                                className="flex sm:hidden"
-                                onClick={() => {
-                                    setHideOnMobile(!hideOnMobile);
-                                }}
-                            >
-                                <span className="material-symbols-outlined">
-                                    menu
-                                </span>
-                            </button>
+                            
                             <button className="flex">
                                 <label className="toggle text-base-content toggle-sm">
                                     <input
                                         type="checkbox"
-                                        onChange={(e) => {
-                                            const isNight = e.target.checked;
-                                            document.documentElement.setAttribute(
-                                                "data-theme",
-                                                isNight ? "dark" : "light"
-                                            );
-                                        }}
+                                        checked={theme === 'dark'}
+                                        onChange={toggleTheme}
                                         className="theme-controller"
                                     />
 
@@ -135,12 +122,25 @@ export default function Navbar() {
                                     </svg>
                                 </label>
                             </button>
-                            {/*
-                            <button className="flex items-center gap-2 hover:underline rounded-md p-1">
-                            <Languages className="w-5 h-5" />
-                            <span className="text-sm">EN</span>
+                            <button 
+                                onClick={() => changeLanguage(isEnglish ? 'es' : 'en')}
+                                className="ml-2 flex items-center gap-2 hover:underline rounded-md p-1 px-2 py-1 border border-gray-300"
+                            >
+                                <Languages className="w-4 h-4" />
+                                <span className="text-sm font-medium">
+                                    {isEnglish ? 'ES' : 'EN'}
+                                </span>
                             </button>
-                            */}
+                            <button
+                                className="flex sm:hidden"
+                                onClick={() => {
+                                    setHideOnMobile(!hideOnMobile);
+                                }}
+                            >
+                                <span className="material-symbols-outlined">
+                                    menu
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>

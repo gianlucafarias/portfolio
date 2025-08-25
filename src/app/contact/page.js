@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Contact() {
+    const { messages } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -33,7 +35,7 @@ export default function Contact() {
                 setSubmitStatus({ type: 'error', message: result.message });
             }
         } catch (error) {
-            setSubmitStatus({ type: 'error', message: 'Error al enviar el mensaje' });
+            setSubmitStatus({ type: 'error', message: messages?.contact?.messages?.error || 'Error al enviar el mensaje' });
         } finally {
             setIsSubmitting(false);
         }
@@ -51,7 +53,7 @@ export default function Contact() {
             <div className="md:w-[700px] w-[100%] mt-5 p-4">
                 <main className="flex flex-col gap-2">
                     <h1 className="text-xl font-medium before:content-['>'] before:mr-1">
-                        Contactame
+                        {messages?.contact?.title || "Contactame"}
                     </h1>
                     <div className="p-1">
                         
@@ -59,9 +61,9 @@ export default function Contact() {
                         <form onSubmit={handleSubmit} className="flex flex-col">
                             <div>
                                 <div>
-                                    <span className="uppercase text-sm text-base-content/80 font-bold">
-                                        Nombre completo
-                                    </span>
+                                                                            <span className="uppercase text-sm text-base-content/80 font-bold">
+                                            {messages?.contact?.form?.name || "Nombre completo"}
+                                        </span>
                                     <input
                                         className="w-full mt-1 p-3 rounded-lg focus:outline-none border border-base-content text-base-content/80 focus:shadow-outline"
                                         type="text"
@@ -72,9 +74,9 @@ export default function Contact() {
                                     />
                                 </div>
                                 <div className="mt-3">
-                                    <span className="uppercase text-sm text-base-content/80 font-bold">
-                                        Correo electrónico
-                                    </span>
+                                                                            <span className="uppercase text-sm text-base-content/80 font-bold">
+                                            {messages?.contact?.form?.email || "Correo electrónico"}
+                                        </span>
                                     <input
                                         className="w-full mt-1 p-3 rounded-lg focus:outline-none border border-base-content text-base-content/80 focus:shadow-outline"
                                         type="email"
@@ -85,9 +87,9 @@ export default function Contact() {
                                     />
                                 </div>
                                 <div className="mt-3">
-                                    <span className="uppercase text-sm text-base-content/80 font-bold">
-                                        Mensaje
-                                    </span>
+                                                                            <span className="uppercase text-sm text-base-content/80 font-bold">
+                                            {messages?.contact?.form?.message || "Mensaje"}
+                                        </span>
                                     <textarea
                                         className="w-full mt-1 p-3 rounded-lg focus:outline-none border border-base-content text-base-content/80 focus:shadow-outline"
                                         name="message"
@@ -103,7 +105,7 @@ export default function Contact() {
                                         disabled={isSubmitting}
                                         className="uppercase text-sm font-bold tracking-wide bg-base-content text-base-100 p-3 cursor-pointer hover:bg-base-content/95 rounded-lg w-full focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
+                                        {isSubmitting ? (messages?.contact?.messages?.sending || 'Enviando...') : (messages?.contact?.form?.send || 'Enviar mensaje')}
                                     </button>
                                 </div>
                                

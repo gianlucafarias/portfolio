@@ -1,8 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import ProjectModal from "../components/ProjectModal";
+import ProjectSkeleton from "../components/ProjectSkeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
+import Image from "next/image";
 
-const ProjectsClient = ({ projects }) => {
+const ProjectsClient = () => {
+    const { messages } = useLanguage();
     const [selectedProject, setSelectedProject] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,10 +24,24 @@ const ProjectsClient = ({ projects }) => {
         <div className="md:w-[700px] w-[100%] mt-5 p-4">
             <main className="flex flex-col gap-2">
                 <h1 className="text-xl font-medium before:content-['>'] before:mr-1">
-                    Todos los proyectos
+                    {messages?.isEnglish ? "All Projects" : "Todos los proyectos"}
                 </h1>
                 <div className="flex flex-col gap-2">
-                    {projects.pinProjects.map((item, index) => (
+                    {!messages ? (
+                        // Mostrar skeletons mientras cargan las traducciones
+                        <>
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                            <ProjectSkeleton />
+                        </>
+                    ) : (
+                        <>
+                            {/* Proyectos destacados */}
+                            {messages.projects?.pinProjects?.map((item, index) => (
                         <div
                             key={index}
                             onClick={() => openModal(item)}
@@ -48,8 +66,22 @@ const ProjectsClient = ({ projects }) => {
                                         <path d="M10 6L10 8 22.59 8 6 24.59 7.41 26 24 9.41 24 22 26 22 26 6 10 6z"></path>
                                     </svg>
                                 </div>
+                                
+                                {/* Imagen del proyecto */}
+                                {item.image && (
+                                    <div className="w-full h-48 overflow-hidden rounded-lg">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.title}
+                                            width={400}
+                                            height={200}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                )}
+                                
                                 <p className="text-base-content/80 text-sm sm:text-base">
-                                    {item.description}
+                                    {item.shortDescription || item.description}
                                 </p>
                                 <div className="flex items-center flex-wrap gap-2 mt-1">
                                     {item.tags.map((tag, idx) => (
@@ -64,7 +96,9 @@ const ProjectsClient = ({ projects }) => {
                             </div>
                         </div>
                     ))}
-                    {projects.otherProjects.map((item, index) => (
+                            
+                            {/* Otros proyectos */}
+                            {messages.projects?.otherProjects?.map((item, index) => (
                         <div
                             key={index}
                             onClick={() => openModal(item)}
@@ -89,8 +123,22 @@ const ProjectsClient = ({ projects }) => {
                                         <path d="M10 6L10 8 22.59 8 6 24.59 7.41 26 24 9.41 24 22 26 22 26 6 10 6z"></path>
                                     </svg>
                                 </div>
+                                
+                                {/* Imagen del proyecto */}
+                                {item.image && (
+                                    <div className="w-full h-48 overflow-hidden rounded-lg">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.title}
+                                            width={400}
+                                            height={200}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                )}
+                                
                                 <p className="text-base-content/80 text-sm sm:text-base">
-                                    {item.description}
+                                    {item.shortDescription || item.description}
                                 </p>
                                 <div className="flex items-center flex-wrap gap-2 mt-1">
                                     {item.tags.map((tag, idx) => (
@@ -105,6 +153,8 @@ const ProjectsClient = ({ projects }) => {
                             </div>
                         </div>
                     ))}
+                        </>
+                    )}
                 </div>
             </main>
 

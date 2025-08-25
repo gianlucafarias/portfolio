@@ -1,13 +1,19 @@
-import { experience } from "../../data/data";
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Experience() {
+    const { messages } = useLanguage();
+    
     return (
         <>
             <div className="mt-10 scroll-mt-14" id="experience">
-                <h2 className="text-xl font-medium before:content-['>'] before:mr-1">Experiencia</h2>
+                <h2 className="text-xl font-medium before:content-['>'] before:mr-1">
+                    {messages?.nav?.experience || "Experiencia"}
+                </h2>
                 <div className="mt-6">
                     <ol className="relative space-y-8 before:absolute before:-ml-px before:h-full before:w-0.5 before:rounded-full before:bg-gray-200 dark:before:bg-gray-500 mt-4 p-2 ">
-                        {experience.map((item, index) => (
+                        {messages?.experience?.map((item, index) => (
                             <li
                                 key={index}
                                 className="relative -ms-1.5 flex items-start gap-4"
@@ -27,7 +33,7 @@ export default function Experience() {
                                     </p>
                                 </div>
                             </li>
-                        ))}
+                        )) || []}
                     </ol>
                 </div>
             </div>

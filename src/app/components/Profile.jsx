@@ -1,21 +1,25 @@
+"use client";
+
 import { socials } from "@/data/data";
-import { about } from "@/data/data";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 
 export default function Profile() {
+    const { messages } = useLanguage();
+    
     return (
         <>
             <img
                 src="https://i.imgur.com/zjGPTRC.jpeg"
                 className="w-[70px] h-[70px] rounded-[50%] object-cover object-center"
-                alt={`${about.name}'s profile`}
+                alt={`${messages?.profile?.name || 'Gianluca Palmier'}'s profile`}
             />
             <div className="flex gap-[5px] items-center mt-1">
-                <h1 className="text-2xl font-semibold">{about.name}</h1>
+                <h1 className="text-2xl font-semibold">{messages?.profile?.name || 'Gianluca Palmier'}</h1>
                
             </div>
             <div className="mt-1.5 flex items-center gap-1">
-                <p className="text-base text-base-content/60">{about.role} </p>
+                <p className="text-base text-base-content/60">{messages?.profile?.role || 'Técnico Universitario en Programación - Full Stack Developer'} </p>
                 
             </div>
             <div className="flex items-center mt-3 gap-3">
@@ -101,15 +105,16 @@ export default function Profile() {
                     </svg>
                 </a>
 
-                <a href={`mailto:${about.email}`}>
+                <a href={`mailto:${messages?.profile?.email || 'palmiergianluca@gmail.com'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 4C21.6569 4 23 5.34315 23 7V17C23 18.6569 21.6569 20 20 20H4C2.34315 20 1 18.6569 1 17V7C1 5.34315 2.34315 4 4 4H20ZM19.2529 6H4.74718L11.3804 11.2367C11.7437 11.5236 12.2563 11.5236 12.6197 11.2367L19.2529 6ZM3 7.1688V17C3 17.5523 3.44772 18 4 18H20C20.5523 18 21 17.5523 21 17V7.16882L13.8589 12.8065C12.769 13.667 11.231 13.667 10.1411 12.8065L3 7.1688Z" fill="currentColor"/>
+<path fillRule="evenodd" clipRule="evenodd" d="M20 4C21.6569 4 23 5.34315 23 7V17C23 18.6569 21.6569 20 20 20H4C2.34315 20 1 18.6569 1 17V7C1 5.34315 2.34315 4 4 4H20ZM19.2529 6H4.74718L11.3804 11.2367C11.7437 11.5236 12.2563 11.5236 12.6197 11.2367L19.2529 6ZM3 7.1688V17C3 17.5523 3.44772 18 4 18H20C20.5523 18 21 17.5523 21 17V7.16882L13.8589 12.8065C12.769 13.667 11.231 13.667 10.1411 12.8065L3 7.1688Z" fill="currentColor"/>
 </svg>
                 </a>
                 <span className="text-sm text-base-content/60">|</span>
                 <Link href="/CV_Gianluca-Palmier.pdf" target="_blank">
                 <button className="text-sm hover:underline cursor-pointer">
-                Descargar CV</button>
+                {messages?.sections?.downloadCV || 'Descargar CV'}
+                </button>
                 </Link>
             </div>
         </>
