@@ -1,19 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
+interface SubmitStatus {
+  type: "success" | "error";
+  message: string;
+}
+
+interface ContactMessages {
+  form?: {
+    name?: string;
+    email?: string;
+    message?: string;
+    send?: string;
+  };
+  messages?: {
+    sending?: string;
+    error?: string;
+  };
+}
 
 export default function ContactForm() {
   const { messages } = useLanguage();
-  const [formData, setFormData] = useState({
+  const contactMessages = messages?.contact as ContactMessages | undefined;
+  
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
@@ -41,18 +67,18 @@ export default function ContactForm() {
           message: result.message,
         });
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus({
         type: "error",
         message:
-          messages?.contact?.messages?.error || "Error al enviar el mensaje",
+          contactMessages?.messages?.error || "Error al enviar el mensaje",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -63,7 +89,7 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
         <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
-          {messages?.contact?.form?.name || "Nombre"}
+          {contactMessages?.form?.name || "Nombre"}
         </label>
         <input
           className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-50 dark:focus:ring-zinc-50"
@@ -72,12 +98,12 @@ export default function ContactForm() {
           value={formData.name}
           onChange={handleChange}
           required
-          placeholder={messages?.contact?.form?.name || "Tu nombre"}
+          placeholder={contactMessages?.form?.name || "Tu nombre"}
         />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
-          {messages?.contact?.form?.email || "Email"}
+          {contactMessages?.form?.email || "Email"}
         </label>
         <input
           className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-50 dark:focus:ring-zinc-50"
@@ -86,12 +112,12 @@ export default function ContactForm() {
           value={formData.email}
           onChange={handleChange}
           required
-          placeholder={messages?.contact?.form?.email || "tu@email.com"}
+          placeholder={contactMessages?.form?.email || "tu@email.com"}
         />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
-          {messages?.contact?.form?.message || "Mensaje"}
+          {contactMessages?.form?.message || "Mensaje"}
         </label>
         <textarea
           className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-50 dark:focus:ring-zinc-50"
@@ -99,8 +125,8 @@ export default function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           required
-          rows="4"
-          placeholder={messages?.contact?.form?.message || "Tu mensaje..."}
+          rows={4}
+          placeholder={contactMessages?.form?.message || "Tu mensaje..."}
         />
       </div>
       <button
@@ -109,8 +135,8 @@ export default function ContactForm() {
         className="rounded-xl bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
       >
         {isSubmitting
-          ? messages?.contact?.messages?.sending || "Enviando..."
-          : messages?.contact?.form?.send || "Enviar"}
+          ? contactMessages?.messages?.sending || "Enviando..."
+          : contactMessages?.form?.send || "Enviar"}
       </button>
       {submitStatus && (
         <div

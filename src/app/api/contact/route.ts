@@ -1,23 +1,29 @@
 import { google } from "googleapis";
+import { NextRequest, NextResponse } from "next/server";
 
+interface ContactFormData {
+  name: string;
+  email: string;
+  message: string;
+}
 
 const credentials = {
-    type: process.env.GOOGLE_SERVICE_ACCOUNT_TYPE,
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    auth_uri: process.env.GOOGLE_AUTH_URI,
-    token_uri: process.env.GOOGLE_TOKEN_URI,
-    auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
-    client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
-    universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
-  };
+  type: process.env.GOOGLE_SERVICE_ACCOUNT_TYPE,
+  project_id: process.env.GOOGLE_PROJECT_ID,
+  private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
+  private_key: process.env.GOOGLE_PRIVATE_KEY,
+  client_email: process.env.GOOGLE_CLIENT_EMAIL,
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  auth_uri: process.env.GOOGLE_AUTH_URI,
+  token_uri: process.env.GOOGLE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
+  universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
+};
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message }: ContactFormData = await request.json();
 
     const auth = await google.auth.getClient({
       projectId: credentials.project_id,
@@ -51,19 +57,19 @@ export async function POST(request) {
       range: "Sheet1!A:F",
       valueInputOption: "RAW",
       insertDataOption: "INSERT_ROWS",
-      resource: {
+      requestBody: {
         values: values
       }
     });
 
-    return Response.json({ 
+    return NextResponse.json({ 
       success: true, 
       message: 'Mensaje enviado correctamente' 
     });
 
   } catch (error) {
     console.error('Error:', error);
-    return Response.json({ 
+    return NextResponse.json({ 
       success: false, 
       message: 'Error al enviar el mensaje' 
     }, { status: 500 });

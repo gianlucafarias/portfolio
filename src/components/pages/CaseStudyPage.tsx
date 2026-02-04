@@ -6,27 +6,76 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { notFound } from "next/navigation";
 
+interface CaseStudy {
+  role?: string;
+  challenge?: string;
+  solution?: string;
+  process?: string[];
+  results?: string;
+}
+
+interface Project {
+  title: string;
+  slug?: string;
+  image?: string;
+  description?: string;
+  link?: string;
+  github?: string;
+  tags?: string[];
+  caseStudy?: CaseStudy;
+}
+
+interface CaseStudyLabels {
+  backToProjects?: string;
+  viewProject?: string;
+  viewCode?: string;
+  overview?: string;
+  role?: string;
+  challenge?: string;
+  solution?: string;
+  process?: string;
+  results?: string;
+  technologies?: string;
+}
+
+interface ProjectsMessages {
+  pinProjects?: Project[];
+  otherProjects?: Project[];
+  caseStudy?: CaseStudyLabels;
+}
+
+interface CaseStudyPageProps {
+  slug: string;
+}
+
+interface CtaLinksProps {
+  project: Project;
+  labels: CaseStudyLabels;
+}
+
 const VARIANTS = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 },
 };
 
-export default function CaseStudyPage({ slug }) {
+export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
   const { messages, isEnglish } = useLanguage();
 
-  if (!messages?.projects) return null;
+  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
+  
+  if (!projectsMessages) return null;
 
-  const pinProjects = messages.projects.pinProjects || [];
-  const otherProjects = messages.projects.otherProjects || [];
+  const pinProjects = projectsMessages.pinProjects || [];
+  const otherProjects = projectsMessages.otherProjects || [];
   const allProjects = [...pinProjects, ...otherProjects];
   const project = allProjects.find((p) => p.slug === slug);
 
   if (!project) notFound();
 
-  const labels = messages.projects.caseStudy || {};
+  const labels = projectsMessages.caseStudy || {};
   const base = isEnglish ? "/en/projects" : "/projects";
 
-  const CtaLinks = ({ project, labels }) => (
+  const CtaLinks = ({ project, labels }: CtaLinksProps) => (
     <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
       <a
         href={project.link}
@@ -137,7 +186,7 @@ export default function CaseStudyPage({ slug }) {
               </motion.section>
             )}
 
-            {project.caseStudy.process?.length > 0 && (
+            {project.caseStudy.process && project.caseStudy.process.length > 0 && (
               <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
                 <h2 className="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-50">
                   {labels.process}
@@ -171,7 +220,7 @@ export default function CaseStudyPage({ slug }) {
           </div>
         )}
 
-        {project.tags?.length > 0 && (
+        {project.tags && project.tags.length > 0 && (
           <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
             <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
               {labels.technologies}

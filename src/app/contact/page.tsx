@@ -16,8 +16,11 @@ const TRANSITION_SECTION = {
 export default function ContactPage() {
   const { messages, isEnglish } = useLanguage();
 
-  const contactTitle = messages?.nav?.contact || "Contacto";
-  const contactDescription = messages?.contact?.description ||
+  const navMessages = messages?.nav as { contact?: string } | undefined;
+  const contactMessages = messages?.contact as { description?: string } | undefined;
+
+  const contactTitle = navMessages?.contact || "Contacto";
+  const contactDescription = contactMessages?.description ||
     (isEnglish
       ? "Have a project in mind? Send me a message and I'll get back to you right away."
       : "¿Tenés un proyecto en mente? Enviame un mensaje y te respondo al toque.");

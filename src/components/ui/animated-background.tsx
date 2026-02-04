@@ -1,8 +1,27 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import { Children, cloneElement, useEffect, useState, useId } from "react";
+import { AnimatePresence, motion, Transition } from "motion/react";
+import { Children, cloneElement, useEffect, useState, useId, ReactElement } from "react";
+
+interface ChildProps {
+  "data-id"?: string;
+  "data-checked"?: string;
+  className?: string;
+  children?: React.ReactNode;
+  onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}
+
+interface AnimatedBackgroundProps {
+  children: ReactElement<ChildProps>[];
+  defaultValue?: string | null;
+  onValueChange?: (id: string | null) => void;
+  className?: string;
+  transition?: Transition;
+  enableHover?: boolean;
+}
 
 export function AnimatedBackground({
   children,
@@ -11,11 +30,11 @@ export function AnimatedBackground({
   className,
   transition,
   enableHover = false,
-}) {
-  const [activeId, setActiveId] = useState(null);
+}: AnimatedBackgroundProps) {
+  const [activeId, setActiveId] = useState<string | null>(null);
   const uniqueId = useId();
 
-  const handleSetActiveId = (id) => {
+  const handleSetActiveId = (id: string | null) => {
     setActiveId(id);
 
     if (onValueChange) {
@@ -30,22 +49,23 @@ export function AnimatedBackground({
   }, [defaultValue]);
 
   return Children.map(children, (child, index) => {
-    const id = child.props["data-id"];
+    const childProps = child.props;
+    const id = childProps["data-id"];
 
     const interactionProps = enableHover
       ? {
-          onMouseEnter: () => handleSetActiveId(id),
+          onMouseEnter: () => handleSetActiveId(id ?? null),
           onMouseLeave: () => handleSetActiveId(null),
         }
       : {
-          onClick: () => handleSetActiveId(id),
+          onClick: () => handleSetActiveId(id ?? null),
         };
 
     return cloneElement(
       child,
       {
         key: index,
-        className: cn("relative inline-flex", child.props.className),
+        className: cn("relative inline-flex", childProps.className),
         "data-checked": activeId === id ? "true" : "false",
         ...interactionProps,
       },
@@ -66,7 +86,7 @@ export function AnimatedBackground({
             />
           )}
         </AnimatePresence>
-        <div className="z-10">{child.props.children}</div>
+        <div className="z-10">{childProps.children}</div>
       </>
     );
   });

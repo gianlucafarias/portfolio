@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Metadata } from "next";
+import { ReactNode } from "react";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -15,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Gianluca Palmier | Técnico Universitario en Programación - Full Stack Developer",
   description:
     "Desarrollador Full-Stack con experiencia práctica en el desarrollo de aplicaciones web utilizando frameworks como React y Angular, junto con herramientas como Next.js y Node.",
@@ -26,7 +28,11 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es" data-theme="light" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>

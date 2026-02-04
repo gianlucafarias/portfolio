@@ -1,9 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { useState, useEffect, useRef, ReactNode } from "react";
+import { motion, useMotionValue, useSpring, SpringOptions } from "motion/react";
 
-const SPRING_CONFIG = { stiffness: 26.7, damping: 4.1, mass: 0.2 };
+const SPRING_CONFIG: SpringOptions = { stiffness: 26.7, damping: 4.1, mass: 0.2 };
+
+type ActionArea = "self" | "parent" | "global";
+
+interface MagneticProps {
+  children: ReactNode;
+  intensity?: number;
+  range?: number;
+  actionArea?: ActionArea;
+  springOptions?: SpringOptions;
+}
 
 export function Magnetic({
   children,
@@ -11,9 +21,9 @@ export function Magnetic({
   range = 100,
   actionArea = "self",
   springOptions = SPRING_CONFIG,
-}) {
+}: MagneticProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -22,7 +32,7 @@ export function Magnetic({
   const springY = useSpring(y, springOptions);
 
   useEffect(() => {
-    const calculateDistance = (e) => {
+    const calculateDistance = (e: MouseEvent) => {
       if (ref.current) {
         const rect = ref.current.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;

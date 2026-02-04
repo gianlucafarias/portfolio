@@ -1,12 +1,19 @@
 "use client";
 
+import { ReactNode } from "react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { TextLoop } from "@/components/ui/text-loop";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const THEMES_OPTIONS = [
+interface ThemeOption {
+  label: string;
+  id: string;
+  icon: ReactNode;
+}
+
+const THEMES_OPTIONS: ThemeOption[] = [
   { label: "Light", id: "light", icon: <SunIcon className="h-4 w-4" /> },
   { label: "Dark", id: "dark", icon: <MoonIcon className="h-4 w-4" /> },
   { label: "System", id: "system", icon: <MonitorIcon className="h-4 w-4" /> },
@@ -16,7 +23,7 @@ function ThemeSwitch() {
   const { theme, toggleTheme } = useTheme();
   const currentTheme = theme === "dark" ? "dark" : "light";
 
-  const handleThemeChange = (id) => {
+  const handleThemeChange = (id: string | null) => {
     if (id === "light" && theme === "dark") toggleTheme();
     if (id === "dark" && theme === "light") toggleTheme();
   };

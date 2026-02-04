@@ -6,8 +6,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Header() {
   const { messages, isEnglish } = useLanguage();
+  
+  const profileMessages = messages?.profile as { name?: string; role?: string } | undefined;
+  const navMessages = messages?.nav as { about?: string; projects?: string; experience?: string; contact?: string } | undefined;
+  
   const roleText =
-    messages?.profile?.role ||
+    profileMessages?.role ||
     (isEnglish
       ? "University Programming Technician - Full Stack Developer"
       : "Técnico Universitario en Programación - Full Stack Developer");
@@ -19,7 +23,7 @@ export function Header() {
           href={isEnglish ? "/en" : "/"}
           className="text-lg font-medium text-black dark:text-white"
         >
-          {messages?.profile?.name || "Gianluca Palmier"}
+          {profileMessages?.name || "Gianluca Palmier"}
         </Link>
         <motion.p
           key={isEnglish ? "en" : "es"}
@@ -35,25 +39,25 @@ export function Header() {
             href={isEnglish ? "/en#about" : "/#about"}
             className="text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
-            {messages?.nav?.about || "Sobre mí"}
+            {navMessages?.about || "Sobre mí"}
           </Link>
           <Link
             href={isEnglish ? "/en/projects" : "/projects"}
             className="text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
-            {messages?.nav?.projects || "Proyectos"}
+            {navMessages?.projects || "Proyectos"}
           </Link>
           <Link
             href={isEnglish ? "/en#experience" : "/#experience"}
             className="text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
-            {messages?.nav?.experience || "Experiencia"}
+            {navMessages?.experience || "Experiencia"}
           </Link>
           <Link
             href={isEnglish ? "/en/contact" : "/contact"}
             className="text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
-            {messages?.nav?.contact || "Contacto"}
+            {navMessages?.contact || "Contacto"}
           </Link>
         </nav>
       </div>

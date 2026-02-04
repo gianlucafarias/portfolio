@@ -1,16 +1,19 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import React from "react";
+import { AnimatePresence, motion, Variants, Transition } from "motion/react";
+import React, { CSSProperties } from "react";
 
-const defaultStaggerTimes = {
+type PerType = "char" | "word" | "line";
+type PresetType = "blur" | "fade-in-blur" | "scale" | "fade" | "slide";
+
+const defaultStaggerTimes: Record<PerType, number> = {
   char: 0.03,
   word: 0.05,
   line: 0.1,
 };
 
-const defaultContainerVariants = {
+const defaultContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -23,13 +26,13 @@ const defaultContainerVariants = {
   },
 };
 
-const defaultItemVariants = {
+const defaultItemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
   exit: { opacity: 0 },
 };
 
-const presetVariants = {
+const presetVariants: Record<PresetType, { container: Variants; item: Variants }> = {
   blur: {
     container: defaultContainerVariants,
     item: {
@@ -68,7 +71,14 @@ const presetVariants = {
   },
 };
 
-function AnimationComponent({ segment, variants, per, segmentWrapperClassName }) {
+interface AnimationComponentProps {
+  segment: string;
+  variants: Variants;
+  per: PerType;
+  segmentWrapperClassName?: string;
+}
+
+function AnimationComponent({ segment, variants, per, segmentWrapperClassName }: AnimationComponentProps) {
   const content =
     per === "line" ? (
       <motion.span variants={variants} className="block">
@@ -110,10 +120,40 @@ function AnimationComponent({ segment, variants, per, segmentWrapperClassName })
   );
 }
 
-const splitText = (text, per) => {
+const splitText = (text: string, per: PerType): string[] => {
   if (per === "line") return text.split("\n");
   return text.split(/(\s+)/);
 };
+
+interface CustomVariants {
+  container?: {
+    visible?: {
+      transition?: {
+        staggerChildren?: number;
+        delayChildren?: number;
+      };
+    };
+  };
+}
+
+interface TextEffectProps {
+  children: string;
+  per?: PerType;
+  as?: keyof React.JSX.IntrinsicElements;
+  variants?: CustomVariants;
+  className?: string;
+  preset?: PresetType;
+  delay?: number;
+  speedReveal?: number;
+  speedSegment?: number;
+  trigger?: boolean;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+  segmentWrapperClassName?: string;
+  containerTransition?: Transition;
+  segmentTransition?: Transition;
+  style?: CSSProperties;
+}
 
 export function TextEffect({
   children,
@@ -132,9 +172,10 @@ export function TextEffect({
   containerTransition,
   segmentTransition,
   style,
-}) {
+}: TextEffectProps) {
   const segments = splitText(children, per);
-  const MotionTag = motion[as] || motion.div;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MotionTag = (motion as any)[as] || motion.div;
 
   const baseVariants = preset
     ? presetVariants[preset]
@@ -150,7 +191,7 @@ export function TextEffect({
     container: {
       ...baseVariants.container,
       visible: {
-        ...baseVariants.container.visible,
+        ...(baseVariants.container as { visible?: object }).visible,
         transition: {
           staggerChildren: customStagger ?? stagger,
           delayChildren: customDelay ?? delay,
@@ -158,7 +199,7 @@ export function TextEffect({
         },
       },
       exit: {
-        ...baseVariants.container.exit,
+        ...(baseVariants.container as { exit?: object }).exit,
         transition: {
           staggerChildren: customStagger ?? stagger,
           staggerDirection: -1,
@@ -168,7 +209,7 @@ export function TextEffect({
     item: {
       ...baseVariants.item,
       visible: {
-        ...baseVariants.item.visible,
+        ...(baseVariants.item as { visible?: object }).visible,
         transition: {
           duration: baseDuration,
           ...segmentTransition,

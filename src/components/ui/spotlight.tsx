@@ -1,17 +1,23 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
-import { motion, useSpring, useTransform } from "motion/react";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { motion, useSpring, useTransform, SpringOptions } from "motion/react";
 import { cn } from "@/lib/utils";
+
+interface SpotlightProps {
+  className?: string;
+  size?: number;
+  springOptions?: SpringOptions;
+}
 
 export function Spotlight({
   className,
   size = 200,
   springOptions = { bounce: 0 },
-}) {
-  const containerRef = useRef(null);
+}: SpotlightProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [parentElement, setParentElement] = useState(null);
+  const [parentElement, setParentElement] = useState<HTMLElement | null>(null);
 
   const mouseX = useSpring(0, springOptions);
   const mouseY = useSpring(0, springOptions);
@@ -31,7 +37,7 @@ export function Spotlight({
   }, []);
 
   const handleMouseMove = useCallback(
-    (event) => {
+    (event: MouseEvent) => {
       if (!parentElement) return;
       const { left, top } = parentElement.getBoundingClientRect();
       mouseX.set(event.clientX - left);
@@ -43,14 +49,17 @@ export function Spotlight({
   useEffect(() => {
     if (!parentElement) return;
 
+    const handleMouseEnter = () => setIsHovered(true);
+    const handleMouseLeave = () => setIsHovered(false);
+
     parentElement.addEventListener("mousemove", handleMouseMove);
-    parentElement.addEventListener("mouseenter", () => setIsHovered(true));
-    parentElement.addEventListener("mouseleave", () => setIsHovered(false));
+    parentElement.addEventListener("mouseenter", handleMouseEnter);
+    parentElement.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       parentElement.removeEventListener("mousemove", handleMouseMove);
-      parentElement.removeEventListener("mouseenter", () => setIsHovered(true));
-      parentElement.removeEventListener("mouseleave", () => setIsHovered(false));
+      parentElement.removeEventListener("mouseenter", handleMouseEnter);
+      parentElement.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [parentElement, handleMouseMove]);
 
