@@ -1,6 +1,5 @@
-import Contact from "../../contact/page";
+import ContactPage from "@/components/pages/ContactPage";
 
 export default function EnglishContact() {
-  return <Contact />;
+  return <ContactPage />;
 }
-

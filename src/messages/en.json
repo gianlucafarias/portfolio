@@ -29,87 +29,156 @@
     "other": "Other Projects",
     "viewProject": "View Project",
     "viewCode": "View Code",
+    "caseStudy": {
+      "backToProjects": "← Back to projects",
+      "overview": "Overview",
+      "challenge": "Challenge",
+      "solution": "Solution",
+      "process": "Process",
+      "results": "Results",
+      "role": "Role",
+      "technologies": "Technologies"
+    },
     "pinProjects": [
       {
+        "slug": "mentesana",
         "title": "MenteSana.app",
         "description": "We developed a web platform for teenagers aimed at promoting information and events related to mental health. We implemented a personal space where users log their daily emotions and receive personalized messages with artificial intelligence. The project received funding from the \"Eureka\" program.",
         "shortDescription": "Web platform for teenagers about mental health with personalized AI and daily emotional tracking.",
         "tags": ["CSS", "React", "Vite", "Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI"],
         "link": "https://mentesana.app/",
         "github": "https://github.com/gianlucafarias/mentesana-app",
-        "image": "/projects/mentesana.png"
+        "image": "/projects/mentesana.png",
+        "caseStudy": {
+          "challenge": "Create a platform that breaks the stigma around mental health among teenagers and offers personalized support in an accessible and anonymous way.",
+          "solution": "A web platform with a daily emotional space where users log how they feel and receive AI-generated responses, plus access to information, events, and mental health resources.",
+          "process": ["Research and MVP definition focused on usability for teenagers", "Design of onboarding flows and emotion logging", "OpenAI integration for personalized messages based on emotional state", "Backend implementation with Express and PostgreSQL for persistence", "Deployment and Eureka program funding"],
+          "results": "Project in production with Eureka program funding. Active platform connecting teenagers with mental health resources in an innovative way.",
+          "role": "Full Stack Developer"
+        }
       },
       {
+        "slug": "la-max-stream",
         "title": "La Max Stream - Android & iOS App",
         "description": "Development of a native application for Maxima FM 95.5 media. I implemented a live streaming system for both audio and video, plus the ability to view on-demand content. The app was developed in React Native with Expo and distributed on Play Store and App Store.",
         "shortDescription": "Native app for live radio and video streaming with on-demand content, available on Play Store and App Store.",
         "tags": ["React Native", "Expo", "Typescript", "Firebase"],
         "link": "https://play.google.com/store/apps/details?id=com.maximaceres.app",
         "github": "https://github.com/gianlucafarias/max-stream-app",
-        "image": "/projects/maximaapp.png"
+        "image": "/projects/maximaapp.png",
+        "caseStudy": {
+          "challenge": "Bring Maxima FM 95.5 content to mobile devices with live audio and video streaming, plus on-demand content, while maintaining quality and stability.",
+          "solution": "Cross-platform native app with React Native and Expo that plays live streaming, catalogs on-demand content, and distributes on both stores.",
+          "process": ["Requirements analysis with Maxima FM team", "HLS streaming configuration for live audio and video", "UI/UX development for player and on-demand library", "Firebase integration for analytics and notifications", "Publication on Play Store and App Store"],
+          "results": "App published on Google Play and Apple App Store. Users can listen and watch Maxima FM content in real time from their devices.",
+          "role": "Mobile Developer"
+        }
       },
       {
+        "slug": "incubadora-noc",
         "title": "Incubadora del NOC - XAcademy Final Project",
         "description": "I implemented the Login and Registration functionalities in the backend, integrating with Firebase as the authentication provider. Additionally, I developed the admin panel module for teachers and administrators in the frontend, using Angular and Material, which facilitated Course management and Access control.",
         "shortDescription": "Firebase authentication system and administrative panel for course management and access control.",
         "tags": ["Angular", "Material", "Firebase", "Node.js", "Express", "PostgreSQL", "Tailwind"],
         "link": "https://github.com/gianlucafarias/xacademy3-back",
         "github": "https://github.com/gianlucafarias/xacademy3-back",
-        "image": "/projects/incubadora.jpeg"
+        "image": "/projects/incubadora.jpeg",
+        "caseStudy": {
+          "challenge": "Build a secure authentication system and admin panel for course management and access control on the Incubadora del NOC platform.",
+          "solution": "Backend with Firebase authentication and Angular frontend with admin panel for teachers and administrators.",
+          "process": ["Firebase Auth integration in Node.js/Express backend", "Login and registration flows with validation", "Admin module development with Angular Material", "Course management and role/permission control", "PostgreSQL connectivity for persistence"],
+          "results": "XAcademy final project successfully delivered. Robust auth system and functional admin panel for the educational platform.",
+          "role": "Full Stack Developer"
+        }
       }
     ],
     "otherProjects": [
       {
+        "slug": "arquitrack",
         "title": "ArquiTrack - Final Career Project",
         "description": "Project presented for the Professional Practice subject of the University Programming Technician degree. The project consists of a construction project management system, where you can create, edit and delete tasks, visits, upload files and invite collaborators.",
         "shortDescription": "Complete construction project management system with tasks, visits, files and team collaboration.",
         "tags": ["Angular", "Material", "Firebase", "Node.js", "Express", "PostgreSQL"],
         "link": "https://www.linkedin.com/posts/gianlucafarias_fullstack-angular-material-activity-7361002158894256130-Z8xc?utm_source=share&utm_medium=member_desktop&rcm=ACoAADSZdkkBDY4aRSUwemY2Xa6WfCsTppcfgA",
         "github": "https://github.com/gianlucafarias/arquitrack-front",
-        "image": "/projects/arquitrack.png"
+        "image": "/projects/arquitrack.png",
+        "caseStudy": {
+          "challenge": "Construction project management system to create projects, tasks, visits, upload files and invite collaborators in an organized way.",
+          "solution": "Full stack web application with Angular, Material, Node.js and PostgreSQL for comprehensive construction project management.",
+          "process": ["Data analysis and modeling for projects, tasks and visits", "REST backend development with Express and PostgreSQL", "Angular frontend with Material Design and complete CRUD flows", "Collaborator invitation and file upload implementation", "Presentation as UTN Final Career Project"],
+          "results": "Project approved in Professional Practice. Functional system for construction project management.",
+          "role": "Full Stack Developer"
+        }
       },
       {
+        "slug": "ceresito",
         "title": "Ceresito - Government of Ceres City Chatbot",
         "description": "Development of a chatbot for the Government of the City of Ceres, using Node.js, Express, PostgreSQL, Tailwind and OpenAI. The chatbot is capable of answering questions about the city and services offered by the government, plus it can send complaints. Additionally, a dashboard developed in Nextjs was implemented for complaint management.",
         "shortDescription": "Intelligent chatbot for citizen services with OpenAI AI, integrated with WhatsApp and management dashboard.",
         "tags": ["Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI", "Whatsapp API", "Langchain", "Nextjs", "Shadcn"],
         "link": "https://bit.ly/holaceresito",
         "github": "",
-        "image": "/projects/ceresito.png"
+        "image": "/projects/ceresito.png",
+        "caseStudy": {
+          "challenge": "Provide 24/7 citizen support about the city and government services, allow complaints and manage them from an admin panel.",
+          "solution": "Chatbot with OpenAI and Langchain integrated with WhatsApp, plus Next.js dashboard for complaint management.",
+          "process": ["WhatsApp Business API integration and conversation flow", "Langchain and OpenAI for contextual city responses", "Node.js backend with Express and PostgreSQL", "Next.js dashboard with Shadcn for complaint monitoring", "Production deployment for Government of Ceres"],
+          "results": "Active chatbot via WhatsApp. Residents get immediate answers and can submit complaints; admins manage them from the dashboard.",
+          "role": "Full Stack Developer"
+        }
       },
       {
+        "slug": "encuesta-plan-obras",
         "title": "Survey - 2026 Works Plan",
         "description": "Web platform for Ceres residents to participate in the 2026 Works Plan survey.",
         "shortDescription": "Citizen participation platform for municipal works plan surveys with voting system.",
         "tags": ["Astro", "Tailwind", "Node Js", "Express", "Redis", "Typescript", "Docker", "PostgreSQL", "Firebase"],
         "link": "https://encuesta.ceres.gob.ar/",
         "github": "",
-        "image": "/projects/encuesta.jpeg"
+        "image": "/projects/encuesta.jpeg",
+        "caseStudy": {
+          "challenge": "Allow Ceres residents to participate in the 2026 Works Plan survey in a secure, auditable and scalable way.",
+          "solution": "Web platform with Astro, Node.js, Redis and PostgreSQL, deployed with Docker, with Firebase authentication.",
+          "process": ["Survey flow design and unique vote validation", "Astro frontend with Tailwind for fast experience", "Express backend with Redis for cache and PostgreSQL for data", "Firebase Auth integration for resident identification", "Deployment at encuesta.ceres.gob.ar"],
+          "results": "Platform in production. Residents actively participate in defining the 2026 Works Plan.",
+          "role": "Full Stack Developer"
+        }
       },
       {
+        "slug": "club-central",
         "title": "Club Central Argentino Olímpico - Official Website",
         "description": "Project in development. Official website of Club Central Argentino Olímpico. A login and registration system for members was implemented, where they can pay their membership fee through Mercado Pago.",
         "shortDescription": "Official club website with membership system and online payments integrated with Mercado Pago.",
         "tags": ["Next Js", "Tailwind", "Node Js", "Express", "PostgreSQL", "Firebase", "Mercado Pago SDK"],
         "link": "https://central-web-rose.vercel.app/",
         "github": "",
-        "image": "/projects/arquitrack.png"
+        "image": "/projects/arquitrack.png",
+        "caseStudy": {
+          "challenge": "Official club website with membership system, login/registration for members and membership fee payments via Mercado Pago.",
+          "solution": "Next.js site with Firebase authentication, Mercado Pago SDK integration and Express/PostgreSQL backend.",
+          "process": ["Design and development of the club institutional website", "Firebase login and registration implementation", "Mercado Pago integration for membership payments", "Express backend and PostgreSQL for member management", "Project in constant evolution"],
+          "results": "Website in development with member system and operational online payments.",
+          "role": "Full Stack Developer"
+        }
       }
     ]
   },
   "experience": [
     {
-      "title": "Full Stack Developer - Government of Ceres City",
+      "title": "Full Stack Developer",
+      "company": "Government of Ceres City",
       "description": "Develop complete web solutions for the modernization area, covering internal and external applications. Responsible for the entire development cycle: requirements gathering, design, development, deployment and maintenance. Reduced external service dependencies by implementing own solutions.",
       "date": "01/04/2024 - Currently"
     },
     {
-      "title": "Motion Graphic Designer - Government of Ceres City",
+      "title": "Motion Graphic Designer",
+      "company": "Government of Ceres City",
       "description": "Creation of graphic animations and advertising spots for the city government using After Effects and Premiere. Development of visual content for institutional communication campaigns.",
       "date": "01/05/2021 - 01/04/2024"
     },
     {
-      "title": "Wordpress Developer - CeresCiudad.com",
+      "title": "Wordpress Developer",
+      "company": "CeresCiudad.com",
       "description": "Design, development and maintenance of the Ceres Ciudad news website. Implementation of custom functionalities and site performance optimization.",
       "date": "01/12/2019 - 01/04/2021"
     }

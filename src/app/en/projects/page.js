@@ -1,6 +1,5 @@
-import ProjectsClient from "../../projects/ProjectsClient";
+import ProjectsPage from "@/components/pages/ProjectsPage";
 
 export default function EnglishProjects() {
-  return <ProjectsClient />;
+  return <ProjectsPage />;
 }
-
