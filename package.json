@@ -14,7 +14,7 @@
     "googleapis": "^156.0.0",
     "lucide-react": "^0.540.0",
     "motion": "^12.29.2",
-    "next": "15.4.4",
+    "next": "^15.5.12",
     "next-intl": "^4.3.4",
     "next-themes": "^0.4.6",
     "react": "19.1.0",
