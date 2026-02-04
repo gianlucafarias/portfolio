@@ -4,63 +4,42 @@
   themes: light --default, dark --prefersdark;
 }
 
-/*@custom-variant dark (@media (prefers-color-scheme: dark), :root:has(input.theme-controller[value=dark]:checked) &);*/
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-
-/*:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
   }
 }
-*/
+
+/* Scrollbar personalizado - fuera de @layer para mayor prioridad */
+html {
+  overflow-y: scroll; /* Fuerza scrollbar siempre visible (necesario en macOS) */
+  scrollbar-color: rgb(255, 98, 0) transparent;
+}
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: rgb(255, 98, 0);
+  border-radius: 5px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: rgb(255, 120, 40);
+}
 
 @theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --animate-marquee: marquee 10s linear infinite;
   @keyframes marquee {
     0%   { transform: translateX(0%); }
     100% { transform: translateX(-50%); }
   }
-}
-
-/* Fondos personalizados para light y dark theme */
-.bg-light-theme {
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(229, 247, 246, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
-    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%, #f8fafc 100%);
-}
-
-.bg-dark-theme {
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%);
-}
-
-/* Asegurar que el contenido esté por encima del fondo */
-.content-wrapper {
-  position: relative;
-  z-index: 1;
-}
-
-html, body {
-  -ms-overflow-style: none;
-   scroll-behavior: smooth;
-   font-family: "Rubik", sans-serif;
 }

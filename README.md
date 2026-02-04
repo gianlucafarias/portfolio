@@ -84,16 +84,16 @@ Crea un archivo `.env.local` en la raíz del proyecto:
 
 ```env
 # Google Sheets API (para formulario de contacto)
-GOOGLE_SERVICE_ACCOUNT_TYPE=service_account
-GOOGLE_PROJECT_ID=tu-proyecto-id
-GOOGLE_PRIVATE_KEY_ID=tu-private-key-id
-GOOGLE_PRIVATE_KEY=tu-private-key
-GOOGLE_CLIENT_EMAIL=tu-client-email
-GOOGLE_CLIENT_ID=tu-client-id
+GOOGLE_SERVICE_ACCOUNT_TYPE=
+GOOGLE_PROJECT_ID=
+GOOGLE_PRIVATE_KEY_ID=
+GOOGLE_PRIVATE_KEY=
+GOOGLE_CLIENT_EMAIL=
+GOOGLE_CLIENT_ID=
 GOOGLE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
 GOOGLE_TOKEN_URI=https://oauth2.googleapis.com/token
 GOOGLE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-GOOGLE_CLIENT_X509_CERT_URL=tu-cert-url
+GOOGLE_CLIENT_X509_CERT_URL=
 GOOGLE_UNIVERSE_DOMAIN=googleapis.com
 
 # Google Sheets ID
