@@ -18,39 +18,51 @@ interface LanguageContextValue {
 
 interface LanguageProviderProps {
   children: ReactNode;
+  initialLocale?: Locale;
+  initialMessages?: Messages;
 }
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [locale, setLocale] = useState<Locale>('es');
-  const [messages, setMessages] = useState<Messages>(null);
+export function LanguageProvider({
+  children,
+  initialLocale = "es",
+  initialMessages = null,
+}: LanguageProviderProps) {
+  const [locale, setLocale] = useState<Locale>(initialLocale);
+  const [messages, setMessages] = useState<Messages>(initialMessages);
+  const [loadedLocale, setLoadedLocale] = useState<Locale | null>(
+    initialMessages ? initialLocale : null
+  );
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     // Detectar idioma basado en la ruta
-    if (pathname.startsWith('/en')) {
-      setLocale('en');
-    } else {
-      setLocale('es');
+    const nextLocale = pathname.startsWith("/en") ? "en" : "es";
+    if (nextLocale !== locale) {
+      setLocale(nextLocale);
     }
   }, [pathname]);
 
   useEffect(() => {
     // Cargar traducciones
+    if (loadedLocale === locale) return;
+
     const loadMessages = async () => {
       try {
         const msgs = await import(`../messages/${locale}.json`);
         setMessages(msgs.default);
+        setLoadedLocale(locale);
       } catch (error) {
         console.error(`Error loading translations for ${locale}:`, error);
         const fallback = await import(`../messages/es.json`);
         setMessages(fallback.default);
+        setLoadedLocale("es");
       }
     };
     loadMessages();
-  }, [locale]);
+  }, [locale, loadedLocale]);
 
   const changeLanguage = (newLocale: Locale) => {
     if (newLocale === 'en') {

@@ -1,18 +1,10 @@
 import { Metadata } from "next";
 import CaseStudyPage from "@/components/pages/CaseStudyPage";
-
-const SLUGS = [
-  "mentesana",
-  "la-max-stream",
-  "incubadora-noc",
-  "arquitrack",
-  "ceresito",
-  "encuesta-plan-obras",
-  "club-central",
-];
+import { getMessages } from "@/lib/i18n";
+import { PROJECT_SLUGS } from "@/lib/projects";
 
 export function generateStaticParams() {
-  return SLUGS.map((slug) => ({ slug }));
+  return PROJECT_SLUGS.map((slug) => ({ slug }));
 }
 
 interface PageProps {
@@ -21,7 +13,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const messages = (await import("@/messages/en.json")).default;
+  const messages = getMessages("en");
   
   interface Project {
     slug?: string;
@@ -40,10 +32,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${project.title} | Case Study`,
     description: project.shortDescription || project.description?.slice(0, 160),
+    alternates: {
+      canonical: `/en/projects/${slug}`,
+      languages: {
+        es: `/projects/${slug}`,
+      },
+    },
+    openGraph: {
+      title: `${project.title} | Case Study`,
+      description: project.shortDescription || project.description?.slice(0, 160),
+      url: `/en/projects/${slug}`,
+      siteName: "Gianluca Palmier",
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} | Case Study`,
+      description: project.shortDescription || project.description?.slice(0, 160),
+    },
   };
 }
 
 export default async function ProjectCaseStudyPageEn({ params }: PageProps) {
   const { slug } = await params;
-  return <CaseStudyPage slug={slug} />;
+  const messages = getMessages("en");
+  return <CaseStudyPage slug={slug} locale="en" messages={messages} />;
 }

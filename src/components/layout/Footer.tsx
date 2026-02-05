@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
-import { TextLoop } from "@/components/ui/text-loop";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -65,13 +64,13 @@ export function Footer() {
           href="https://github.com/gianlucafarias"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-xs text-zinc-400 transition-colors hover:text-orange-500 dark:text-zinc-500 dark:hover:text-orange-400"
         >
-          <TextLoop className="text-xs text-zinc-500">
-            <span>© 2026 gianluca.dev</span>
-            <span>{isEnglish ? "Built with Next.js" : "Hecho con Next.js"}</span>
-          </TextLoop>
+          <span>© 2026 gianluca.dev</span>
+          <span className="mx-1 text-zinc-300/70 dark:text-zinc-700">•</span>
+          <span>{isEnglish ? "Built with Next.js" : "Hecho con Next.js"}</span>
         </a>
-        <div className="text-xs text-zinc-400">
+        <div className="text-xs text-zinc-500 dark:text-zinc-500">
           <ThemeSwitch />
         </div>
       </div>

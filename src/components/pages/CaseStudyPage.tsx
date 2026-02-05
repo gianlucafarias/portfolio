@@ -1,10 +1,10 @@
 "use client";
 
-import { useLanguage } from "@/contexts/LanguageContext";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { notFound } from "next/navigation";
+import type { Locale, Messages } from "@/lib/i18n";
 
 interface CaseStudy {
   role?: string;
@@ -46,6 +46,8 @@ interface ProjectsMessages {
 
 interface CaseStudyPageProps {
   slug: string;
+  locale: Locale;
+  messages: Messages;
 }
 
 interface CtaLinksProps {
@@ -58,9 +60,8 @@ const VARIANTS = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
-  const { messages, isEnglish } = useLanguage();
-
+export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageProps) {
+  const isEnglish = locale === "en";
   const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   
   if (!projectsMessages) return null;
