@@ -9,6 +9,8 @@ function getLocale(request: NextRequest): NextResponse {
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
+  const resolvedLocale = pathname.startsWith("/en") ? "en" : "es";
+
   if (pathnameIsMissingLocale) {
     const acceptLanguage = request.headers.get("accept-language");
     let preferredLocale = defaultLocale;
@@ -37,7 +39,13 @@ function getLocale(request: NextRequest): NextResponse {
     }
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-locale", resolvedLocale);
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export function middleware(request: NextRequest) {
