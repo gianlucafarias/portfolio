@@ -39,16 +39,9 @@ async function getSheetsClient() {
 
   const privateKey = credentials.private_key?.replace(/\\n/g, "\n");
 
-  const auth = await google.auth.getClient({
-    projectId: credentials.project_id,
-    credentials: {
-      type: "service_account",
-      private_key: privateKey,
-      client_email: credentials.client_email,
-      client_id: credentials.client_id,
-      token_uri: credentials.token_uri,
-      universe_domain: "googleapis.com",
-    },
+  const auth = new google.auth.JWT({
+    email: credentials.client_email,
+    key: privateKey,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -69,7 +62,7 @@ function getClientIp(request: NextRequest) {
   if (forwarded) {
     return forwarded.split(",")[0].trim();
   }
-  return request.ip || "unknown";
+  return request.headers.get("x-real-ip") || "unknown";
 }
 
 function isRateLimited(ip: string) {
