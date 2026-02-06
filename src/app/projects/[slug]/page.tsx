@@ -1,18 +1,16 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import CaseStudyPage from "@/components/pages/CaseStudyPage";
+import {
+  getAllProjectSlugs,
+  getProjectBySlug,
+} from "@/lib/projects-sheet";
 
-const SLUGS = [
-  "mentesana",
-  "la-max-stream",
-  "incubadora-noc",
-  "arquitrack",
-  "ceresito",
-  "encuesta-plan-obras",
-  "club-central",
-];
+export const dynamic = "force-static";
 
-export function generateStaticParams() {
-  return SLUGS.map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 interface PageProps {
@@ -21,22 +19,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const messages = (await import("@/messages/es.json")).default;
-  
-  interface Project {
-    slug?: string;
-    title: string;
-    shortDescription?: string;
-    description?: string;
-  }
-  
-  const pinProjects = (messages?.projects?.pinProjects || []) as Project[];
-  const otherProjects = (messages?.projects?.otherProjects || []) as Project[];
-  const all = [...pinProjects, ...otherProjects];
-  const project = all.find((p) => p.slug === slug);
-  
+  const project = await getProjectBySlug("es", slug);
+
   if (!project) return { title: "Proyecto no encontrado" };
-  
+
   return {
     title: `${project.title} | Case Study`,
     description: project.shortDescription || project.description?.slice(0, 160),
@@ -45,5 +31,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectCaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
-  return <CaseStudyPage slug={slug} />;
+  const project = await getProjectBySlug("es", slug);
+
+  if (!project) notFound();
+
+  return <CaseStudyPage project={project} />;
 }
