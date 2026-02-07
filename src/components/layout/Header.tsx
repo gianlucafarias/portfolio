@@ -42,9 +42,15 @@ export function Header() {
       <div>
         <Link
           href={isEnglish ? "/en" : "/"}
-          className="text-lg font-medium text-black dark:text-white"
+          className="group/name relative inline-flex items-baseline gap-1.5 text-lg font-medium text-black dark:text-white"
         >
-          {profileMessages?.name || "Gianluca Palmier"}
+          <span>{profileMessages?.name || "Gianluca Palmier"}</span>
+          <span
+            className="inline-block translate-y-1 opacity-0 transition-all duration-200 group-hover/name:translate-y-0 group-hover/name:opacity-100"
+            aria-hidden
+          >
+            🇦🇷
+          </span>
         </Link>
         <motion.p
           key={isEnglish ? "en" : "es"}
