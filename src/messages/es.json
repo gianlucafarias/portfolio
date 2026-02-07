@@ -32,29 +32,162 @@
     "caseStudy": {
       "backToProjects": "← Volver a proyectos",
       "overview": "Resumen",
-      "challenge": "Desafío",
+      "challenge": "Problema",
       "solution": "Solución",
       "process": "Proceso",
       "results": "Resultados",
       "role": "Rol",
-      "technologies": "Tecnologías"
+      "technologies": "Tecnologías",
+      "myRole": "Mi rol",
+      "technicalArchitecture": "Arquitectura técnica",
+      "impact": "Impacto",
+      "majorChallenge": "Gran desafío",
+      "currentUsage": "Uso actual",
+      "keyLearnings": "Aprendizajes clave",
+      "migrationStrategy": "Estrategia de migración"
     },
     "pinProjects": [
       {
+        "slug": "ceresito",
+        "title": "Ceresito — Asistente Conversacional de Ceres",
+        "description": "Ceresito es el chatbot oficial del Gobierno de la Ciudad de Ceres, utilizado por más de 1.000 ciudadanos activos mensuales y procesando más de 20.000 consultas por mes. Funciona como canal principal de comunicación digital entre el municipio y la comunidad, centralizando trámites, reclamos, información pública y campañas institucionales.\n\nDesde su lanzamiento, Ceresito se convirtió en la \"cara digital\" del municipio, siendo ampliamente reconocido por los vecinos y utilizado en múltiples iniciativas oficiales.",
+        "shortDescription": "Chatbot oficial del Gobierno de la Ciudad de Ceres.",
+        "tags": ["TypeScript", "Node.js", "Express", "PostgreSQL", "Redis", "Docker", "WhatsApp Business API", "Next.js", "LangChain", "OpenAI API"],
+        "link": "https://bit.ly/holaceresito",
+        "github": "",
+        "image": "/projects/ceresito.png",
+        "caseStudy": {
+          "role": "Fullstack Engineer & Product Owner",
+          "year": "2023 – Presente",
+          "challenge": "El municipio necesitaba modernizar su canal de atención ciudadana: la atención presencial estaba saturada, no existía trazabilidad de reclamos, la información estaba fragmentada entre áreas y no había un canal digital directo, confiable y accesible para toda la población. Además, se buscaba una solución sin fricción (sin apps, sin registros complejos), accesible desde cualquier teléfono y con capacidad de escalar en volumen.",
+          "solution": "Diseñé y desarrollé una plataforma conversacional basada en WhatsApp que permite a los ciudadanos consultar información sobre trámites, impuestos, salud, educación, turismo y servicios; crear reclamos y hacer seguimiento en tiempo real de su estado; recibir alertas masivas (clima, emergencias, campañas públicas); y acceder a documentos oficiales (ej: certificados PDF emitidos automáticamente durante eventos masivos). En paralelo, construí un panel interno en Next.js para que las áreas municipales puedan gestionar flujos, reclamos, contenidos y métricas sin depender del equipo técnico.",
+          "myRole": "Fui responsable de todo el ciclo del producto: ideación junto al área de comunicación; diseño del personaje, tono, identidad y comunicación visual; arquitectura backend y diseño de base de datos; desarrollo del bot, panel administrativo e integraciones; despliegue, monitoreo y mantenimiento; integración de IA en flujos específicos mediante LLMs; gestión de crisis técnica y relación con proveedores.",
+          "technicalArchitecture": "Backend: Node.js + Express + TypeScript\nDatabase: PostgreSQL + Redis (cache y colas)\nInfraestructura: Docker\nIntegraciones: WhatsApp Business API (Meta)\nAdmin Panel: Next.js (uso interno)\nIA: LangChain + OpenAI API en flujos específicos\n\nEl sistema fue diseñado desde el inicio para soportar alto volumen de concurrencia y permitir cambios rápidos en flujos sin afectar la operación.",
+          "impact": "+1.000 usuarios activos mensuales\n+20.000 consultas procesadas por mes\nCanal principal de comunicación digital del municipio\nReducción significativa de atención presencial\nMayor trazabilidad y transparencia en reclamos ciudadanos\nUso en campañas públicas, emergencias climáticas y eventos masivos\n\nDurante los Congresos de la Mujer 2023 y 2024, Ceresito emitió certificados oficiales en PDF directamente por WhatsApp, eliminando impresión en papel y multiplicando la adopción del canal.",
+          "majorChallenge": "Un día antes del lanzamiento oficial, el bot fue bloqueado por WhatsApp debido al alto volumen de mensajes. En ese momento utilizábamos un proveedor no oficial (Baileys), lo que generó que Meta lo interpretara como spam. Tomé contacto directo con el equipo de Meta, gestioné la validación del caso, presenté la documentación institucional y, en menos de 48 horas: recuperamos el mismo número, obtuvimos insignia verde de verificación y migré toda la infraestructura a la WhatsApp Business API oficial. Esto implicó rediseñar flujos, adaptadores y pipelines bajo presión real, fortaleciendo la arquitectura y enseñándome a diseñar sistemas preparados para cambios de proveedor y contingencias.",
+          "currentUsage": "Actualmente lo utilizan áreas como: Comunicación, Obras Públicas, Intendencia, Deportes, Cultura. Y sigue creciendo como plataforma base de servicios digitales del municipio.",
+          "keyLearnings": [
+            "Diseñar productos conversacionales centrados en UX real",
+            "Arquitectura backend resiliente a cambios de proveedor",
+            "Integración de IA en flujos productivos reales",
+            "Manejo de crisis técnica en producción",
+            "Construcción de producto en contextos públicos y de alto impacto social"
+          ]
+        }
+      },
+      {
+        "slug": "ceres-api",
+        "title": "Ceres API — Modernización Backend",
+        "description": "Ceres API es la plataforma backend central del Gobierno de la Ciudad de Ceres. Nació como un backend Express para soportar Ceresito y paneles internos, pero con el crecimiento del sistema se volvió monolítico, difícil de escalar, acoplado y sin garantías de seguridad ni observabilidad.\n\nActualmente lidero una migración incremental a NestJS orientada a convertir este backend en una plataforma modular, escalable, segura y mantenible, sin interrumpir servicios críticos en producción.",
+        "shortDescription": "Migración progresiva de backend crítico de Express a NestJS sin downtime.",
+        "tags": ["TypeScript", "NestJS 11", "PostgreSQL", "TypeORM", "Redis", "Docker", "Prometheus", "Grafana", "JWT", "OpenAPI"],
+        "link": "",
+        "github": "",
+        "image": "/projects/ceres-api.png",
+        "caseStudy": {
+          "role": "Lead Backend Engineer",
+          "year": "2025 – Presente",
+          "challenge": "El backend legacy presentaba múltiples limitaciones: arquitectura monolítica y altamente acoplada; sin versionado de API; sin autenticación ni autorización formal; sin tests ni contratos claros; difícil de escalar y mantener; sin observabilidad real. Además, no era viable un rewrite completo debido a sistemas críticos en producción, dependencias con bots, dashboards y servicios públicos, y riesgo operativo inaceptable.",
+          "solution": "Diseñé una estrategia de migración incremental por dominios, manteniendo compatibilidad con los endpoints existentes mientras modernizamos la arquitectura: backend reescrito en NestJS 11; modularización por dominios de negocio; contratos tipados con DTOs y validación; infraestructura base con healthchecks, Redis opcional y configuración centralizada; observabilidad con Prometheus + Grafana; estrategia de paridad funcional entre legacy y nuevo backend; migración módulo por módulo sin downtime. El sistema legacy continúa operativo mientras progresivamente se enrutan módulos al nuevo backend mediante un patrón de transición controlada.",
+          "myRole": "Soy responsable de: diseño de arquitectura backend; definición de estrategia de migración sin downtime; modelado de datos y contratos de API; implementación de infraestructura base; observabilidad y monitoreo; organización de repositorio, branching strategy y DX; documentación técnica de cada fase.",
+          "technicalArchitecture": "Framework: NestJS 11 + TypeScript\nORM: TypeORM (synchronize false)\nDatabase: PostgreSQL\nCache / Infra: Redis (opcional)\nObservabilidad: Prometheus + Grafana\nSeguridad (en progreso): JWT + roles + API keys\nInfraestructura: Docker\nDocumentación: OpenAPI + documentación de migración por fases\n\nLa arquitectura está diseñada para evolucionar hacia microservicios si fuese necesario, manteniendo inicialmente un monorepo modular y versionado.",
+          "migrationStrategy": [
+            "Infraestructura base primero (config, DB, Redis, health)",
+            "Migración de entidades 1:1 con tablas legacy",
+            "Definición de DTOs y contratos compatibles",
+            "Migración por módulos: Analytics / Contactos → Reclamos → Encuestas + Redis → Notificaciones → Impuestos → BotConfig / Feedback / Votantes → Farmacias / Duty",
+            "Validación de paridad funcional con el backend legacy antes de mover tráfico"
+          ],
+          "impact": "Backend preparado para escalar por dominios\nReducción drástica de acoplamiento\nBase sólida para autenticación, versionado y testing\nObservabilidad real en producción\nReducción del riesgo operativo futuro",
+          "keyLearnings": [
+            "Migración incremental de sistemas legacy sin downtime",
+            "Diseño de plataformas backend escalables",
+            "Arquitectura modular orientada a dominios",
+            "Observabilidad y confiabilidad en producción",
+            "Evolución de monolitos hacia sistemas modernos sin reescritura total"
+          ]
+        }
+      },
+      {
+        "slug": "ceres-en-red",
+        "title": "Ceres en Red — Plataforma de Servicios Locales",
+        "description": "Ceres en Red es la plataforma oficial del Gobierno de la Ciudad de Ceres para conectar vecinos con profesionales y técnicos verificados de forma rápida, segura y directa. Permite encontrar servicios por categoría, profesión o ubicación, acceder a perfiles detallados y contactar al profesional directamente por WhatsApp, sin intermediación ni fricción.\n\nEl objetivo fue resolver un problema cotidiano: cuando surge una urgencia (plomero, electricista, enfermera, abogado), los vecinos no saben a quién contactar ni cómo hacerlo de forma confiable. Ceres en Red centraliza esta información, promueve el trabajo local y genera un canal oficial y validado entre ciudadanos y profesionales.",
+        "shortDescription": "Marketplace para conectar vecinos con profesionales verificados.",
+        "tags": ["Next.js", "TypeScript", "Tailwind CSS", "OAuth", "Workers", "Jobs", "WhatsApp Deep Links", "Vercel", "PostgreSQL"],
+        "link": "https://ceresenred.ceres.gob.ar",
+        "github": "",
+        "image": "/projects/ceresenred.png",
+        "caseStudy": {
+          "role": "Fullstack Engineer & Product Owner",
+          "year": "2025 – Presente",
+          "challenge": "Antes de Ceres en Red: los vecinos dependían del \"boca a boca\" para encontrar servicios confiables; no existía un canal oficial para validar profesionales locales; los profesionales no tenían un espacio centralizado para visibilizar su oferta; la búsqueda era lenta, informal y poco escalable. Desde el municipio se buscaba una solución simple, directa y sin fricción; accesible desde el celular; que priorice contacto inmediato; con validación institucional para generar confianza.",
+          "solution": "Diseñé y desarrollé una plataforma web donde los vecinos pueden buscar profesionales por rubro, profesión, ciudad o categoría; cada profesional cuenta con un perfil público con servicios, zonas de cobertura, horarios y contacto directo por WhatsApp; el municipio valida y aprueba los perfiles antes de hacerlos visibles, asegurando confianza y calidad; los profesionales gestionan su información desde un panel propio; el contacto se realiza fuera de la plataforma (WhatsApp), eliminando fricción y necesidad de mensajería interna. El resultado es un marketplace local, liviano, directo y orientado a resolver problemas reales en minutos.",
+          "myRole": "Fui responsable del proyecto end-to-end: definición de producto, alcance y roadmap; diseño de UX/UI y arquitectura de información; modelado de base de datos; desarrollo frontend y backend completo; autenticación (email/password + Google/Facebook); panel de profesionales y flujo de verificación; infraestructura, despliegue y optimización de performance; implementación de workers y jobs para emails y notificaciones. Actué como Fullstack Engineer y Product Owner del producto.",
+          "technicalArchitecture": "Frontend / App:\nNext.js (App Router) · TypeScript · Tailwind CSS · Componentes reutilizables\n\nBackend / Infra:\nAPI interna modular · Workers para emails y logs · Despliegue sobre Vercel y contenedores\n\nAutenticación:\nEmail/password · OAuth (Google / Facebook)\n\nContacto:\nIntegración directa vía WhatsApp del profesional (sin intermediación)",
+          "majorChallenge": "Optimización de build y performance en Next.js: a medida que la plataforma crecía en rutas, componentes y assets, el build comenzó a volverse pesado y lento. Trabajé en optimización de bundles, code splitting estratégico, carga diferida de componentes pesados y reorganización de layouts y dependencias. Esto permitió mantener tiempos de build bajos y una experiencia fluida en dispositivos móviles.\n\nJobs y procesos asincrónicos: implementé workers separados para envío de correos, procesamiento de logs y notificaciones del sistema. Esto desacopló tareas críticas del request-response principal y mejoró la resiliencia del sistema.",
+          "currentUsage": "Plataforma desplegada en producción. Dominio activo: ceresenred.ceres.gob.ar. En proceso de lanzamiento público. Carga activa de profesionales locales validándose desde el municipio.",
+          "impact": "Facilitar el acceso a servicios profesionales en la ciudad\nPromover el trabajo local\nReducir tiempos de búsqueda en situaciones urgentes\nGenerar confianza a través de validación institucional\nConvertirse en la plataforma base de servicios del ecosistema local",
+          "keyLearnings": [
+            "Diseño de marketplaces orientados a baja fricción",
+            "Optimización avanzada de builds en Next.js",
+            "Arquitectura de sistemas con contacto externo (off-platform)",
+            "Construcción de productos públicos de impacto social",
+            "Integración de flujos institucionales en plataformas digitales"
+          ]
+        }
+      },
+      {
+        "slug": "turni",
+        "title": "Turni — Plataforma SaaS de Turnos",
+        "description": "Turni es una plataforma SaaS para que negocios y profesionales creen su tienda online, gestionen turnos, clientes y servicios, y automaticen notificaciones y pagos mediante suscripciones. Fue diseñada como un producto multi-tenant completo, con planes Free y Premium, integraciones externas y un dashboard administrativo robusto.\n\nEl objetivo fue construir un sistema de reservas moderno, orientado a WhatsApp-first workflows, fácil de configurar y escalable desde pequeños negocios hasta operaciones con múltiples sucursales.",
+        "shortDescription": "Sistema de reservas con suscripciones, pagos y notificaciones automáticas.",
+        "tags": ["Astro", "React", "Supabase", "PostgreSQL", "Docker", "Tailwind CSS", "Mercado Pago", "WhatsApp API", "Google Calendar API"],
+        "link": "",
+        "github": "https://github.com/gianlucafarias/turni",
+        "image": "/projects/turni.png",
+        "caseStudy": {
+          "role": "Founder & Fullstack Engineer",
+          "year": "2025",
+          "challenge": "Muchos negocios gestionan turnos de forma manual: mensajes dispersos por WhatsApp; agendas en papel o Google Calendar sin automatización; cancelaciones sin aviso; sin visibilidad centralizada de clientes ni métricas. Las plataformas existentes suelen ser costosas, complejas de configurar y poco adaptadas al mercado local (pagos, WhatsApp, dominios personalizados).",
+          "solution": "Turni permite a los negocios crear su tienda online con dominio propio; configurar servicios, horarios y sucursales; gestionar clientes y reservas desde un dashboard; enviar notificaciones por email y WhatsApp; sincronizar agendas con Google Calendar; cobrar mediante suscripciones (Mercado Pago). Incluye plan Free y Premium con límites funcionales, prueba gratuita de 30 días y automatización completa del flujo de turnos.",
+          "myRole": "Fui responsable del producto end-to-end: ideación, definición de planes y modelo de negocio; diseño de UX/UI y flujos de usuario; arquitectura SaaS multi-tenant; desarrollo frontend, backend y sistema de pagos; integración con WhatsApp, email y Google Calendar; infraestructura, despliegue y testing manual.",
+          "technicalArchitecture": "Frontend:\nAstro · React · Tailwind CSS\n\nBackend / Infra:\nSupabase (auth, DB, storage) · Docker · Workers para notificaciones y jobs\n\nIntegraciones:\nMercado Pago (suscripciones) · WhatsApp · Email · Google Calendar\n\nLógica de planes:\nPlan Free: hasta 5 turnos/día, 2 servicios, sin WhatsApp ni Google Calendar ni dominio propio.\nPlan Premium: turnos ilimitados, hasta 20 servicios, múltiples sucursales, 30 notificaciones WhatsApp/semana, integraciones externas, dominio personalizado, automatización completa.",
+          "majorChallenge": "Diseño de SaaS multi-tenant con control por planes: implementé lógica de límites por suscripción directamente en backend, asegurando aislamiento entre cuentas, enforcement real de features por plan y upgrade/downgrade dinámico sin romper flujos existentes.\n\nIntegración de pagos por suscripción: construí flujos completos con Mercado Pago para alta de planes, manejo de estados (trial, activo, vencido, cancelado) y bloqueo/desbloqueo automático de features.\n\nAutomatización de notificaciones: diseñé workers independientes para recordatorios por WhatsApp y email, notificaciones al cliente y al negocio, y sincronización con Google Calendar.",
+          "currentUsage": "MVP funcional completo. Dashboard operativo. Infraestructura preparada para producción. No lanzado públicamente por costos de hosting, pero totalmente usable.",
+          "keyLearnings": [
+            "Diseño de SaaS multi-tenant desde cero",
+            "Implementación de monetización real (suscripciones)",
+            "Integración con sistemas de mensajería externos",
+            "Arquitectura de productos orientados a automatización",
+            "Trade-offs de infra en early-stage products"
+          ]
+        }
+      },
+      {
         "slug": "mentesana",
-        "title": "MenteSana.app",
-        "description": "Desarrollamos una web destinada a adolescentes con el objetivo de promover información y eventos relacionados a la salud mental. Implementamos un espacio personal en donde los usuarios cargan sus emociones diariamente y reciben mensajes personalizados con inteligencia artificial. El proyecto recibió financiación del programa \"Eureka\".",
-        "shortDescription": "Plataforma web para adolescentes sobre salud mental con IA personalizada y seguimiento emocional diario.",
-        "tags": ["CSS", "React", "Vite", "Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI"],
+        "title": "MenteSana — Plataforma de Salud Mental",
+        "description": "MenteSana es una plataforma web orientada a adolescentes que busca promover el bienestar emocional, reducir el estigma en torno a la salud mental y facilitar el acceso a recursos confiables. Permite a los usuarios registrar diariamente cómo se sienten y recibir respuestas personalizadas generadas por inteligencia artificial, además de acceder a información, eventos y contenidos educativos sobre salud mental.\n\nEl proyecto fue financiado por el programa Eureka, validando tanto su impacto social como su enfoque tecnológico.",
+        "shortDescription": "Seguimiento emocional para adolescentes con feedback asistido por IA.",
+        "tags": ["React", "Vite", "Tailwind CSS", "Node.js", "Express", "PostgreSQL", "OpenAI API"],
         "link": "https://mentesana.app/",
         "github": "https://github.com/gianlucafarias/mentesana-app",
         "image": "/projects/mentesana.png",
         "caseStudy": {
-          "challenge": "Crear una plataforma que rompa el estigma de la salud mental entre adolescentes y ofrezca apoyo personalizado de forma accesible y anónima.",
-          "solution": "Una web con espacio emocional diario donde los usuarios registran cómo se sienten y reciben respuestas generadas por IA, además de acceso a información, eventos y recursos sobre salud mental.",
-          "process": ["Investigación y definición de MVP con foco en usabilidad para adolescentes", "Diseño de flujos de onboarding y registro de emociones", "Integración de OpenAI para mensajes personalizados según estado emocional", "Implementación de backend con Express y PostgreSQL para persistencia", "Despliegue y obtención de financiación Eureka"],
-          "results": "Proyecto en producción con financiación del programa Eureka. Plataforma activa que conecta a adolescentes con recursos de salud mental de forma innovadora.",
-          "role": "Full Stack Developer"
+          "role": "Fullstack Engineer (Backend & AI)",
+          "year": "2025",
+          "challenge": "Muchos adolescentes no cuentan con espacios seguros para expresar cómo se sienten; evitan hablar de salud mental por estigma o miedo al juicio; no acceden fácilmente a recursos confiables ni acompañamiento temprano. Las soluciones existentes suelen ser clínicas, poco accesibles o no adaptadas al lenguaje ni hábitos digitales adolescentes.",
+          "solution": "Diseñamos una plataforma donde los usuarios registran su estado emocional diariamente; reciben mensajes personalizados generados por IA en función de su estado; acceden a información clara sobre salud mental; encuentran eventos y recursos locales; interactúan de forma anónima y sin fricción.",
+          "myRole": "Me encargué de: arquitectura backend y modelo de datos; integración con OpenAI para generación de respuestas empáticas personalizadas; desarrollo de APIs y lógica de negocio; implementación de módulos clave de la landing; despliegue e infraestructura. Colaboración: proyecto desarrollado junto a Sofía Jamanca (Frontend Engineer), quien lideró diseño UX/UI, desarrollo frontend completo, flujos de onboarding y experiencia de usuario.",
+          "technicalArchitecture": "Frontend:\nReact · Vite · Tailwind CSS\n\nBackend:\nNode.js · Express · PostgreSQL\n\nIA:\nOpenAI API para generación de mensajes personalizados según estado emocional",
+          "majorChallenge": "Diseño de respuestas emocionales con IA responsable: diseñé prompts, reglas y validaciones para que los mensajes generados sean empáticos, no patologizantes, apropiados para adolescentes y no reemplacen acompañamiento profesional.\n\nBackend seguro para datos sensibles: implementé persistencia segura, separación de datos personales y flujos que priorizan privacidad y anonimato.",
+          "process": ["Investigación y definición de MVP con foco en usabilidad adolescente", "Diseño de flujos de onboarding y registro emocional (Sofía)", "Integración de OpenAI y backend de persistencia (yo)", "Desarrollo conjunto de landing y módulos clave", "Despliegue y validación institucional mediante financiación Eureka"],
+          "results": "Proyecto en producción. Financiación obtenida por el programa Eureka. Plataforma activa con uso real. Validación de IA aplicada a bienestar emocional.",
+          "keyLearnings": [
+            "Trabajo colaborativo en producto",
+            "Integración responsable de IA en contextos sensibles",
+            "Diseño backend para aplicaciones de impacto social",
+            "Construcción de MVPs con validación institucional"
+          ]
         }
       },
       {
@@ -95,36 +228,30 @@
     "otherProjects": [
       {
         "slug": "arquitrack",
-        "title": "ArquiTrack - Proyecto Final de Carrera",
-        "description": "Proyecto presentado para la materia Práctica Profesional de la carrera de Técnico Universitario en Programación. El proyecto consiste en un sistema de gestión de proyectos de construcción, donde se pueden crear, editar y eliminar proyectos, así como también se pueden crear, editar y eliminar tareas, visitas, cargar archivos e invitar colaboradores.",
-        "shortDescription": "Sistema completo de gestión de proyectos de construcción con tareas, visitas, archivos y colaboración en equipo.",
-        "tags": ["Angular", "Material", "Firebase", "Node.js", "Express", "PostgreSQL"],
+        "title": "ArquiTrack — Sistema de Gestión de Proyectos de Construcción",
+        "description": "ArquiTrack es una aplicación web full stack diseñada para arquitectos y equipos de obra que necesitan organizar proyectos de construcción, tareas, visitas, archivos y colaboradores en un único sistema. Fue desarrollado como proyecto final de carrera para la materia Práctica Profesional en la Tecnicatura Universitaria en Programación (UTN).\n\nEl objetivo fue construir una herramienta que centralice la gestión operativa de proyectos de obra, mejorando la trazabilidad, colaboración y seguimiento de tareas en equipos técnicos.",
+        "shortDescription": "Sistema de gestión de proyectos de construcción para arquitectos y equipos de obra. Tareas, visitas, archivos y colaboración. Proyecto Final UTN.",
+        "tags": ["Angular", "Angular Material", "Node.js", "Express", "PostgreSQL", "Firebase"],
         "link": "https://www.linkedin.com/posts/gianlucafarias_fullstack-angular-material-activity-7361002158894256130-Z8xc?utm_source=share&utm_medium=member_desktop&rcm=ACoAADSZdkkBDY4aRSUwemY2Xa6WfCsTppcfgA",
         "github": "https://github.com/gianlucafarias/arquitrack-front",
         "image": "/projects/arquitrack.png",
         "caseStudy": {
-          "challenge": "Sistema de gestión de proyectos de construcción que permita crear proyectos, tareas, visitas, cargar archivos e invitar colaboradores de forma organizada.",
-          "solution": "Aplicación web full stack con Angular, Material, Node.js y PostgreSQL para gestión integral de proyectos de construcción.",
-          "process": ["Análisis y modelado de datos para proyectos, tareas y visitas", "Desarrollo del backend REST con Express y PostgreSQL", "Frontend Angular con Material Design y flujos CRUD completos", "Implementación de invitación a colaboradores y carga de archivos", "Presentación como Proyecto Final de Carrera UTN"],
-          "results": "Proyecto aprobado en Práctica Profesional. Sistema funcional para gestión de proyectos de construcción.",
-          "role": "Full Stack Developer"
-        }
-      },
-      {
-        "slug": "ceresito",
-        "title": "Ceresito - Chatbot del Gobierno de la Ciudad de Ceres",
-        "description": "Desarrollo de un chatbot para el Gobierno de la Ciudad de Ceres, utilizando Node.js, Express, PostgreSQL, Tailwind y OpenAI. El chatbot es capaz de responder preguntas sobre la ciudad y los servicios que ofrece el gobierno, además de poder enviar reclamos. Además, se implementó un dashboard desarrollado en Nextjs para el control de reclamos.",
-        "shortDescription": "Chatbot inteligente para atención ciudadana con IA de OpenAI, integrado a WhatsApp y dashboard de gestión.",
-        "tags": ["Node.js", "Express", "PostgreSQL", "Tailwind", "OpenAI", "Whatsapp API", "Langchain", "Nextjs", "Shadcn"],
-        "link": "https://bit.ly/holaceresito",
-        "github": "",
-        "image": "/projects/ceresito.png",
-        "caseStudy": {
-          "challenge": "Ofrecer atención ciudadana 24/7 sobre la ciudad y servicios del gobierno, permitir reclamos y gestionarlos desde un panel administrativo.",
-          "solution": "Chatbot con OpenAI y Langchain integrado a WhatsApp, más dashboard Next.js para gestión de reclamos.",
-          "process": ["Integración con WhatsApp Business API y flujo de conversación", "Uso de Langchain y OpenAI para respuestas contextuales sobre la ciudad", "Backend Node.js con Express y PostgreSQL", "Dashboard Next.js con Shadcn para monitoreo de reclamos", "Despliegue en producción para Gobierno de Ceres"],
-          "results": "Chatbot activo vía WhatsApp. Vecinos reciben respuestas inmediatas y pueden enviar reclamos; administradores los gestionan desde el dashboard.",
-          "role": "Full Stack Developer"
+          "role": "Fullstack Engineer",
+          "year": "2025",
+          "challenge": "En muchos estudios de arquitectura y proyectos de construcción: la información se gestiona en múltiples herramientas dispersas; no existe un seguimiento claro de tareas, visitas técnicas y documentación; la colaboración entre profesionales carece de trazabilidad; la carga y organización de archivos es desordenada. Esto genera pérdida de información, errores de comunicación y baja visibilidad del avance real de obra.",
+          "solution": "Desarrollé una plataforma web que permite crear y gestionar proyectos de construcción; crear, editar y asignar tareas; registrar visitas técnicas; subir y organizar archivos; invitar colaboradores a proyectos; centralizar toda la información del ciclo de obra en un solo sistema.",
+          "myRole": "Fui responsable del proyecto end-to-end: análisis funcional y modelado de dominio; diseño de base de datos; desarrollo backend REST; desarrollo frontend completo; integración de autenticación; implementación de carga de archivos y colaboración; presentación académica y defensa del proyecto.",
+          "technicalArchitecture": "Frontend:\nAngular · Angular Material\n\nBackend:\nNode.js · Express · PostgreSQL\n\nServicios:\nFirebase (auth / storage)",
+          "majorChallenge": "Modelado de dominio para proyectos de obra: diseñé un modelo de datos capaz de representar proyectos, tareas, visitas técnicas, archivos, colaboradores y permisos, buscando mantener consistencia y escalabilidad en un dominio complejo.\n\nColaboración multiusuario: implementé flujos de invitación, permisos y acceso compartido a proyectos, permitiendo trabajo colaborativo real dentro del sistema.",
+          "process": ["Análisis de requerimientos y modelado de datos", "Desarrollo del backend REST con Express + PostgreSQL", "Desarrollo frontend con Angular + Material Design", "Implementación de carga de archivos e invitaciones", "Presentación y aprobación como Proyecto Final UTN"],
+          "results": "Proyecto aprobado en la materia Práctica Profesional. Sistema completamente funcional. Validación académica de arquitectura full stack completa. Base sólida para futuros productos en vertical construcción.",
+          "keyLearnings": [
+            "Diseño de sistemas CRUD complejos",
+            "Modelado de dominios reales",
+            "Arquitectura full stack completa",
+            "Gestión de archivos y permisos",
+            "Desarrollo de productos desde requerimiento hasta entrega"
+          ]
         }
       },
       {
@@ -143,24 +270,8 @@
           "results": "Plataforma en producción. Vecinos participan activamente en la definición del Plan de Obras 2026.",
           "role": "Full Stack Developer"
         }
-      },
-      {
-        "slug": "club-central",
-        "title": "Club Central Argentino Olímpico - Web Oficial",
-        "description": "Proyecto en desarrollo. Web oficial del Club Central Argentino Olímpico. Se implementó un sistema de login y registro para socios, donde podrán pagar su cuota societaria a través de Mercado Pago.",
-        "shortDescription": "Sitio web oficial del club con sistema de membresía y pagos online integrados a Mercado Pago.",
-        "tags": ["Next Js", "Tailwind", "Node Js", "Express", "PostgreSQL", "Firebase", "Mercado Pago SDK"],
-        "link": "https://central-web-rose.vercel.app/",
-        "github": "",
-        "image": "/projects/arquitrack.png",
-        "caseStudy": {
-          "challenge": "Web oficial del club con sistema de membresía, login/registro para socios y pagos de cuota vía Mercado Pago.",
-          "solution": "Sitio Next.js con autenticación Firebase, integración Mercado Pago SDK y backend Express/PostgreSQL.",
-          "process": ["Diseño y desarrollo de la web institucional del club", "Implementación de login y registro con Firebase", "Integración de Mercado Pago para pagos de cuotas", "Backend Express y PostgreSQL para gestión de socios", "Proyecto en constante evolución"],
-          "results": "Web en desarrollo con sistema de socios y pagos online operativo.",
-          "role": "Full Stack Developer"
-        }
       }
+
     ]
   },
   "experience": [

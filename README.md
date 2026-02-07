@@ -46,6 +46,12 @@ GOOGLE_CLIENT_ID=
 NEXT_PUBLIC_SHEET_ID=
 ```
 
+Opcional para proyectos:
+
+```env
+PROJECTS_SHEET_TAB=projects
+```
+
 ## Estructura
 
 ```
@@ -67,11 +73,12 @@ src/
 
 ## Personalización
 
-El contenido se edita en `src/messages/es.json` y `src/messages/en.json`:
-- Proyectos en `projects.pinProjects` y `projects.otherProjects`
+El contenido general se edita en `src/messages/es.json` y `src/messages/en.json`:
 - Info personal en `profile`
 - Experiencia en `experience`
 - Educación en `education`
+
+Los proyectos ahora se gestionan desde Google Sheets en una pestaña `projects` (configurable con `PROJECTS_SHEET_TAB`).
 
 ## Contacto
 

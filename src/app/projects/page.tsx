@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import ProjectsPageClient from "@/components/pages/ProjectsPageClient";
 import { getMessages } from "@/lib/i18n";
+import { getProjectsByLocale } from "@/lib/projects-sheet";
 
 const messages = getMessages("es");
 
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProjectsPage() {
-  return <ProjectsPageClient locale="es" messages={messages} />;
+export default async function ProjectsPage() {
+  const { pinProjects, otherProjects } = await getProjectsByLocale("es");
+  return <ProjectsPageClient locale="es" messages={messages} pinProjects={pinProjects} otherProjects={otherProjects} />;
 }

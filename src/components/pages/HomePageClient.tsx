@@ -10,14 +10,7 @@ import ContactForm from "@/components/forms/ContactForm";
 import { Languages } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Locale, Messages } from "@/lib/i18n";
-
-interface Project {
-  title: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-  shortDescription?: string;
-}
+import type { Project } from "@/lib/projects-sheet";
 
 interface ExperienceItem {
   title: string;
@@ -54,9 +47,19 @@ interface SectionsMessages {
   downloadCV?: string;
 }
 
-interface ProjectsMessages {
-  pinProjects?: Project[];
-}
+
+const SKILLS = [
+  { label: "HTML", icon: "/html.svg" },
+  { label: "CSS", icon: "/css.svg" },
+  { label: "JavaScript", icon: "/js.svg" },
+  { label: "React", icon: "/react.svg" },
+  { label: "Next.js", icon: "/nextjs.svg" },
+  { label: "Node.js", icon: "/node-js.svg" },
+  { label: "PostgreSQL", icon: "/postgresql.svg" },
+  { label: "Tailwind", icon: "/tailwind.svg" },
+  { label: "Angular", icon: "/angular.svg" },
+  { label: "Vercel", icon: "/vercel.svg" },
+];
 
 const VARIANTS_CONTAINER = {
   hidden: { opacity: 0 },
@@ -135,9 +138,10 @@ function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
 interface HomePageClientProps {
   locale: Locale;
   messages: Messages;
+  pinProjects: Project[];
 }
 
-export default function HomePageClient({ locale, messages }: HomePageClientProps) {
+export default function HomePageClient({ locale, messages, pinProjects }: HomePageClientProps) {
   const isEnglish = locale === "en";
   const router = useRouter();
   const pathname = usePathname();
@@ -145,11 +149,10 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
   const profileMessages = messages?.profile as ProfileMessages | undefined;
   const navMessages = messages?.nav as NavMessages | undefined;
   const sectionsMessages = messages?.sections as SectionsMessages | undefined;
-  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   const experience = (messages?.experience || []) as ExperienceItem[];
   const education = (messages?.education || []) as EducationItem[];
 
-  const projectsToShow = projectsMessages?.pinProjects?.slice(0, 4) || [];
+  const projectsToShow = pinProjects.slice(0, 5);
   const basePath = isEnglish ? "/en/projects" : "/projects";
   const email = profileMessages?.email || "palmiergianluca@gmail.com";
   const about = profileMessages?.about || "";
@@ -203,6 +206,34 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
       </motion.section>
 
       <motion.section
+        id="skills"
+        className="scroll-mt-24"
+        variants={VARIANTS_SECTION}
+        transition={TRANSITION_SECTION}
+      >
+        <h3 className="mb-5 text-xl font-medium">
+          {isEnglish ? "Skills" : "Habilidades"}
+        </h3>
+        <div className="flex flex-wrap gap-3">
+          {SKILLS.map((skill) => (
+            <div
+              key={skill.label}
+              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-50"
+            >
+              <Image
+                src={skill.icon}
+                alt={skill.label}
+                width={16}
+                height={16}
+                className="h-4 w-4 opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0 dark:opacity-70 dark:brightness-0 dark:invert dark:group-hover:brightness-100"
+              />
+              <span>{skill.label}</span>
+            </div>
+          ))}
+        </div>
+      </motion.section>
+
+      <motion.section
         id="projects"
         className="scroll-mt-24"
         variants={VARIANTS_SECTION}
@@ -230,7 +261,7 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
                     />
                   ) : (
                     <div className="flex aspect-video w-full items-center justify-center bg-zinc-200 dark:bg-zinc-800">
-                      <span className="text-zinc-500">Sin imagen</span>
+                      <span className="text-zinc-500">{isEnglish ? "No image" : "Sin imagen"}</span>
                     </div>
                   )}
                   <div className="pointer-events-none absolute inset-0 bg-zinc-900/[0.04] dark:bg-zinc-50/[0.04]" />
@@ -239,10 +270,9 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
               <div className="px-1">
                 <Link
                   href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                  className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
+                  className="font-base inline-block font-[450] text-zinc-900 transition-colors hover:text-[#ff6200] dark:text-zinc-50 dark:hover:text-[#ff6200]"
                 >
                   {project.title}
-                  <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-orange-500/80 transition-all duration-200 group-hover:max-w-full dark:bg-orange-400/80" />
                 </Link>
                 <p className="text-base text-zinc-600 dark:text-zinc-300">
                   {project.shortDescription || (project.description?.slice(0, 100) + "...")}

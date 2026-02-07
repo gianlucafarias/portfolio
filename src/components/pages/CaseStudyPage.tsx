@@ -3,27 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { notFound } from "next/navigation";
 import type { Locale, Messages } from "@/lib/i18n";
-
-interface CaseStudy {
-  role?: string;
-  challenge?: string;
-  solution?: string;
-  process?: string[];
-  results?: string;
-}
-
-interface Project {
-  title: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-  link?: string;
-  github?: string;
-  tags?: string[];
-  caseStudy?: CaseStudy;
-}
+import type { Project } from "@/lib/projects-sheet";
 
 interface CaseStudyLabels {
   backToProjects?: string;
@@ -36,16 +17,21 @@ interface CaseStudyLabels {
   process?: string;
   results?: string;
   technologies?: string;
+  myRole?: string;
+  technicalArchitecture?: string;
+  impact?: string;
+  majorChallenge?: string;
+  currentUsage?: string;
+  keyLearnings?: string;
+  migrationStrategy?: string;
 }
 
 interface ProjectsMessages {
-  pinProjects?: Project[];
-  otherProjects?: Project[];
   caseStudy?: CaseStudyLabels;
 }
 
 interface CaseStudyPageProps {
-  slug: string;
+  project: Project;
   locale: Locale;
   messages: Messages;
 }
@@ -60,32 +46,26 @@ const VARIANTS = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageProps) {
+export default function CaseStudyPage({ project, locale, messages }: CaseStudyPageProps) {
   const isEnglish = locale === "en";
   const projectsMessages = messages?.projects as ProjectsMessages | undefined;
-  
-  if (!projectsMessages) return null;
-
-  const pinProjects = projectsMessages.pinProjects || [];
-  const otherProjects = projectsMessages.otherProjects || [];
-  const allProjects = [...pinProjects, ...otherProjects];
-  const project = allProjects.find((p) => p.slug === slug);
-
-  if (!project) notFound();
-
-  const labels = projectsMessages.caseStudy || {};
+  const labels = projectsMessages?.caseStudy || {};
   const base = isEnglish ? "/en/projects" : "/projects";
 
-  const CtaLinks = ({ project, labels }: CtaLinksProps) => (
+  const CtaLinks = ({ project, labels }: CtaLinksProps) => {
+    if (!project.link && !project.github) return null;
+    return (
     <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-      <a
-        href={project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="rounded-xl bg-zinc-900 px-5 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-      >
-        {labels.viewProject || "Ver Proyecto"}
-      </a>
+      {project.link && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl bg-zinc-900 px-5 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        >
+          {labels.viewProject || "Ver Proyecto"}
+        </a>
+      )}
       {project.github && (
         <a
           href={project.github}
@@ -106,6 +86,7 @@ export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageP
       )}
     </div>
   );
+  };
 
   return (
     <motion.article
@@ -115,19 +96,18 @@ export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageP
       variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
     >
       <div className="space-y-6 lg:sticky lg:top-24">
-        <Link
-          href={base}
-          className="inline-flex text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
-        >
-          {labels.backToProjects || "← Volver a proyectos"}
-        </Link>
         <motion.header className="space-y-2" variants={VARIANTS} transition={{ duration: 0.3 }}>
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
             {project.title}
           </h1>
-          {project.caseStudy?.role && (
+          {(project.caseStudy?.role || project.caseStudy?.year) && (
             <p className="text-zinc-500 dark:text-zinc-400">
-              {labels.role}: {project.caseStudy.role}
+              {[
+                project.caseStudy.role && `${labels.role}: ${project.caseStudy.role}`,
+                project.caseStudy.year,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
             </p>
           )}
         </motion.header>
@@ -151,6 +131,12 @@ export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageP
         <motion.div variants={VARIANTS} transition={{ duration: 0.3 }}>
           <CtaLinks project={project} labels={labels} />
         </motion.div>
+        <Link
+          href={base}
+          className="inline-flex text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+        >
+          {labels.backToProjects || "← Volver a proyectos"}
+        </Link>
       </div>
 
       <div className="space-y-12 pt-2">
@@ -216,6 +202,101 @@ export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageP
                 <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.results}
                 </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.myRole && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.myRole}
+                </h2>
+                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {project.caseStudy.myRole}
+                </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.technicalArchitecture && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.technicalArchitecture}
+                </h2>
+                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                  {project.caseStudy.technicalArchitecture}
+                </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.migrationStrategy && project.caseStudy.migrationStrategy.length > 0 && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.migrationStrategy}
+                </h2>
+                <ol className="space-y-3">
+                  {project.caseStudy.migrationStrategy.map((step, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-3 text-zinc-600 dark:text-zinc-400"
+                    >
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+                        {i + 1}
+                      </span>
+                      <span className="leading-relaxed">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </motion.section>
+            )}
+
+            {project.caseStudy.impact && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.impact}
+                </h2>
+                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                  {project.caseStudy.impact}
+                </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.majorChallenge && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.majorChallenge}
+                </h2>
+                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {project.caseStudy.majorChallenge}
+                </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.currentUsage && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-3 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.currentUsage}
+                </h2>
+                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                  {project.caseStudy.currentUsage}
+                </p>
+              </motion.section>
+            )}
+
+            {project.caseStudy.keyLearnings && project.caseStudy.keyLearnings.length > 0 && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                  {labels.keyLearnings}
+                </h2>
+                <ul className="space-y-2">
+                  {project.caseStudy.keyLearnings.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-3 text-zinc-600 dark:text-zinc-400"
+                    >
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                      <span className="leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.section>
             )}
           </div>

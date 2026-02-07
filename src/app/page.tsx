@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import HomePageClient from "@/components/pages/HomePageClient";
 import { getMessages } from "@/lib/i18n";
+import { getProjectsByLocale } from "@/lib/projects-sheet";
 
 const messages = getMessages("es");
 const seo = messages?.seo as {
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  return <HomePageClient locale="es" messages={messages} />;
+export default async function HomePage() {
+  const { pinProjects } = await getProjectsByLocale("es");
+  return <HomePageClient locale="es" messages={messages} pinProjects={pinProjects} />;
 }

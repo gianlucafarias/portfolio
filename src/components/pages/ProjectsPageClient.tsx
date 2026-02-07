@@ -5,19 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
 import type { Locale, Messages } from "@/lib/i18n";
+import type { Project } from "@/lib/projects-sheet";
 
-interface Project {
-  title: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-  shortDescription?: string;
-  tags?: string[];
-}
-
-interface ProjectsMessages {
-  pinProjects?: Project[];
-  otherProjects?: Project[];
+interface ProjectsPageClientProps {
+  locale: Locale;
+  messages: Messages;
+  pinProjects: Project[];
+  otherProjects: Project[];
 }
 
 const VARIANTS_CONTAINER = {
@@ -35,16 +29,8 @@ const VARIANTS_SECTION = {
 
 const TRANSITION_SECTION = { duration: 0.3 };
 
-interface ProjectsPageClientProps {
-  locale: Locale;
-  messages: Messages;
-}
-
-export default function ProjectsPageClient({ locale, messages }: ProjectsPageClientProps) {
+export default function ProjectsPageClient({ locale, messages, pinProjects, otherProjects }: ProjectsPageClientProps) {
   const isEnglish = locale === "en";
-  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
-  const pinProjects = projectsMessages?.pinProjects || [];
-  const otherProjects = projectsMessages?.otherProjects || [];
   const allProjects = [...pinProjects, ...otherProjects];
   const basePath = isEnglish ? "/en/projects" : "/projects";
 
@@ -112,10 +98,9 @@ export default function ProjectsPageClient({ locale, messages }: ProjectsPageCli
               <div className="px-1">
                 <Link
                   href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                  className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
+                  className="font-base inline-block font-[450] text-zinc-900 transition-colors hover:text-[#ff6200] dark:text-zinc-50 dark:hover:text-[#ff6200]"
                 >
                   {project.title}
-                  <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-orange-500/80 transition-all duration-200 group-hover:max-w-full dark:bg-orange-400/80" />
                 </Link>
                 <p className="text-base text-zinc-600 dark:text-zinc-300">
                   {project.shortDescription ||
