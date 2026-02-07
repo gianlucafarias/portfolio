@@ -49,15 +49,16 @@ interface SectionsMessages {
 
 
 const SKILLS = [
-  { label: "HTML", icon: "/html.svg" },
-  { label: "CSS", icon: "/css.svg" },
-  { label: "JavaScript", icon: "/js.svg" },
+  { label: "Typescript", icon: "/ts.svg" },
   { label: "React", icon: "/react.svg" },
   { label: "Next.js", icon: "/nextjs.svg" },
   { label: "Node.js", icon: "/node-js.svg" },
-  { label: "PostgreSQL", icon: "/postgresql.svg" },
-  { label: "Tailwind", icon: "/tailwind.svg" },
+  { label: "NestJS", icon: "/nestjs.svg"},
+  { label: "Astro", icon: "/astro.svg"},
   { label: "Angular", icon: "/angular.svg" },
+  { label: "Tailwind", icon: "/tailwind.svg" },
+  { label: "PostgreSQL", icon: "/postgresql.svg" },
+  { label: "AWS", icon: "/AWS.svg"},
   { label: "Vercel", icon: "/vercel.svg" },
 ];
 
@@ -188,6 +189,9 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
+         <h3 className="mb-5 text-xl font-medium">
+          {isEnglish ? "About me" : "Sobre mí"}
+        </h3>
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
@@ -225,7 +229,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
                 alt={skill.label}
                 width={16}
                 height={16}
-                className="h-4 w-4 opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0 dark:opacity-70 dark:brightness-0 dark:invert dark:group-hover:brightness-100"
+                className="h-4 w-4 opacity-70 brightness-0 transition-all group-hover:opacity-100 dark:brightness-0 dark:invert dark:group-hover:opacity-100"
               />
               <span>{skill.label}</span>
             </div>
@@ -380,7 +384,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             </MagneticSocialLink>
           ))}
           <Link
-            href="/CV_Gianluca-Palmier.pdf"
+            href="/CV_Gianluca_Palmier.pdf"
             target="_blank"
             className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
           >
