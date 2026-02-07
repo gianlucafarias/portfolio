@@ -2,9 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 const locales = ["es", "en"] as const;
 const defaultLocale = "es";
+const EN_SUBDOMAIN = "en.gianluca.dev";
 
 function getLocale(request: NextRequest): NextResponse {
   const pathname = request.nextUrl.pathname;
+  const hostname = request.nextUrl.hostname;
+
+  // Si el host es en.gianluca.dev, siempre servir contenido en inglés
+  if (hostname === EN_SUBDOMAIN) {
+    const pathnameHasEn = pathname.startsWith("/en") || pathname === "/en";
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-locale", "en");
+    if (!pathnameHasEn) {
+      const url = request.nextUrl.clone();
+      url.pathname = pathname === "/" ? "/en" : `/en${pathname}`;
+      return NextResponse.rewrite(url, {
+        request: { headers: requestHeaders },
+      });
+    }
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
