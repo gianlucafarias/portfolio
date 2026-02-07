@@ -8,6 +8,7 @@ import { getMessages } from "@/lib/i18n";
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -124,6 +125,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <div className="relative mx-auto w-full max-w-screen-md flex-1 px-4 pt-20">
                 <Header />
                 {children}
+                <Analytics/>
                 <Footer />
               </div>
             </div>
