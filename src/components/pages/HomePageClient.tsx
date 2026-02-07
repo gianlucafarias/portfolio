@@ -10,14 +10,7 @@ import ContactForm from "@/components/forms/ContactForm";
 import { Languages } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Locale, Messages } from "@/lib/i18n";
-
-interface Project {
-  title: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-  shortDescription?: string;
-}
+import type { Project } from "@/lib/projects-sheet";
 
 interface ExperienceItem {
   title: string;
@@ -54,9 +47,6 @@ interface SectionsMessages {
   downloadCV?: string;
 }
 
-interface ProjectsMessages {
-  pinProjects?: Project[];
-}
 
 const SKILLS = [
   { label: "HTML", icon: "/html.svg" },
@@ -148,9 +138,10 @@ function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
 interface HomePageClientProps {
   locale: Locale;
   messages: Messages;
+  pinProjects: Project[];
 }
 
-export default function HomePageClient({ locale, messages }: HomePageClientProps) {
+export default function HomePageClient({ locale, messages, pinProjects }: HomePageClientProps) {
   const isEnglish = locale === "en";
   const router = useRouter();
   const pathname = usePathname();
@@ -158,11 +149,10 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
   const profileMessages = messages?.profile as ProfileMessages | undefined;
   const navMessages = messages?.nav as NavMessages | undefined;
   const sectionsMessages = messages?.sections as SectionsMessages | undefined;
-  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   const experience = (messages?.experience || []) as ExperienceItem[];
   const education = (messages?.education || []) as EducationItem[];
 
-  const projectsToShow = projectsMessages?.pinProjects?.slice(0, 5) || [];
+  const projectsToShow = pinProjects.slice(0, 5);
   const basePath = isEnglish ? "/en/projects" : "/projects";
   const email = profileMessages?.email || "palmiergianluca@gmail.com";
   const about = profileMessages?.about || "";
@@ -228,7 +218,7 @@ export default function HomePageClient({ locale, messages }: HomePageClientProps
           {SKILLS.map((skill) => (
             <div
               key={skill.label}
-              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-orange-400 dark:hover:text-orange-400"
+              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-50"
             >
               <Image
                 src={skill.icon}

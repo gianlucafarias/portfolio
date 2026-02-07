@@ -5,24 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
 import type { Locale, Messages } from "@/lib/i18n";
-
-interface Project {
-  title: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-  shortDescription?: string;
-  tags?: string[];
-}
-
-interface ProjectsMessages {
-  pinProjects?: Project[];
-  otherProjects?: Project[];
-}
+import type { Project } from "@/lib/projects-sheet";
 
 interface ProjectsPageClientProps {
   locale: Locale;
   messages: Messages;
+  pinProjects: Project[];
+  otherProjects: Project[];
 }
 
 const VARIANTS_CONTAINER = {
@@ -40,11 +29,8 @@ const VARIANTS_SECTION = {
 
 const TRANSITION_SECTION = { duration: 0.3 };
 
-export default function ProjectsPageClient({ locale, messages }: ProjectsPageClientProps) {
+export default function ProjectsPageClient({ locale, messages, pinProjects, otherProjects }: ProjectsPageClientProps) {
   const isEnglish = locale === "en";
-  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
-  const pinProjects = projectsMessages?.pinProjects || [];
-  const otherProjects = projectsMessages?.otherProjects || [];
   const allProjects = [...pinProjects, ...otherProjects];
   const basePath = isEnglish ? "/en/projects" : "/projects";
 

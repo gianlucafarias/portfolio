@@ -1,10 +1,14 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import CaseStudyPage from "@/components/pages/CaseStudyPage";
 import { getMessages } from "@/lib/i18n";
-import { PROJECT_SLUGS } from "@/lib/projects";
+import { getAllProjectSlugs, getProjectBySlug } from "@/lib/projects-sheet";
 
-export function generateStaticParams() {
-  return PROJECT_SLUGS.map((slug) => ({ slug }));
+export const dynamic = "force-static";
+
+export async function generateStaticParams() {
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 interface PageProps {
@@ -13,19 +17,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const messages = getMessages("en");
-
-  interface Project {
-    slug?: string;
-    title: string;
-    shortDescription?: string;
-    description?: string;
-  }
-
-  const pinProjects = (messages?.projects?.pinProjects || []) as Project[];
-  const otherProjects = (messages?.projects?.otherProjects || []) as Project[];
-  const all = [...pinProjects, ...otherProjects];
-  const project = all.find((p) => p.slug === slug);
+  const project = await getProjectBySlug("en", slug);
 
   if (!project) return { title: "Project not found" };
 
@@ -56,6 +48,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectCaseStudyPageEn({ params }: PageProps) {
   const { slug } = await params;
+  const project = await getProjectBySlug("en", slug);
   const messages = getMessages("en");
-  return <CaseStudyPage slug={slug} locale="en" messages={messages} />;
+
+  if (!project) notFound();
+
+  return <CaseStudyPage project={project} locale="en" messages={messages} />;
 }
