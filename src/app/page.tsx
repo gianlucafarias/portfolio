@@ -1,19 +1,38 @@
+import { Metadata } from "next";
 import HomePageClient from "@/components/pages/HomePageClient";
-import { getProjectsByLocale } from "@/lib/projects-sheet";
+import { getMessages } from "@/lib/i18n";
 
-export const dynamic = "force-static";
+const messages = getMessages("es");
+const seo = messages?.seo as {
+  title?: string;
+  description?: string;
+  keywords?: string;
+} | undefined;
+export const metadata: Metadata = {
+  title: seo?.title || "Portfolio",
+  description: seo?.description,
+  keywords: seo?.keywords,
+  alternates: {
+    canonical: "/",
+    languages: {
+      en: "/en",
+    },
+  },
+  openGraph: {
+    title: seo?.title || "Portfolio",
+    description: seo?.description,
+    url: "/",
+    siteName: "Gianluca Palmier",
+    locale: "es_AR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: seo?.title || "Portfolio",
+    description: seo?.description,
+  },
+};
 
-export default async function HomePage() {
-  const [{ pinProjects: pinProjectsEs }, { pinProjects: pinProjectsEn }] =
-    await Promise.all([
-      getProjectsByLocale("es"),
-      getProjectsByLocale("en"),
-    ]);
-
-  return (
-    <HomePageClient
-      pinProjectsEs={pinProjectsEs}
-      pinProjectsEn={pinProjectsEn}
-    />
-  );
+export default function HomePage() {
+  return <HomePageClient locale="es" messages={messages} />;
 }

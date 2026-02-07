@@ -1,10 +1,37 @@
 "use client";
 
-import { useLanguage } from "@/contexts/LanguageContext";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
-import type { Project } from "@/lib/projects-sheet";
+import { notFound } from "next/navigation";
+import type { Locale, Messages } from "@/lib/i18n";
+
+interface CaseStudy {
+  role?: string;
+  year?: string;
+  challenge?: string;
+  solution?: string;
+  process?: string[];
+  results?: string;
+  myRole?: string;
+  technicalArchitecture?: string;
+  migrationStrategy?: string[];
+  impact?: string;
+  majorChallenge?: string;
+  currentUsage?: string;
+  keyLearnings?: string[];
+}
+
+interface Project {
+  title: string;
+  slug?: string;
+  image?: string;
+  description?: string;
+  link?: string;
+  github?: string;
+  tags?: string[];
+  caseStudy?: CaseStudy;
+}
 
 interface CaseStudyLabels {
   backToProjects?: string;
@@ -31,7 +58,9 @@ interface ProjectsMessages {
 }
 
 interface CaseStudyPageProps {
-  project: Project;
+  slug: string;
+  locale: Locale;
+  messages: Messages;
 }
 
 interface CtaLinksProps {
@@ -44,12 +73,18 @@ const VARIANTS = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function CaseStudyPage({ project }: CaseStudyPageProps) {
-  const { messages, isEnglish } = useLanguage();
-
+export default function CaseStudyPage({ slug, locale, messages }: CaseStudyPageProps) {
+  const isEnglish = locale === "en";
   const projectsMessages = messages?.projects as ProjectsMessages | undefined;
-  
+
   if (!projectsMessages) return null;
+
+  const pinProjects = (projectsMessages as { pinProjects?: Project[] }).pinProjects || [];
+  const otherProjects = (projectsMessages as { otherProjects?: Project[] }).otherProjects || [];
+  const allProjects = [...pinProjects, ...otherProjects];
+  const project = allProjects.find((p) => p.slug === slug);
+
+  if (!project) notFound();
 
   const labels = projectsMessages.caseStudy || {};
   const base = isEnglish ? "/en/projects" : "/projects";

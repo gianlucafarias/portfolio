@@ -3,13 +3,21 @@
 import { ReactNode } from "react";
 import { motion } from "motion/react";
 import { Magnetic } from "@/components/ui/magnetic";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { socials } from "@/data/constants";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/forms/ContactForm";
 import { Languages } from "lucide-react";
-import type { Project } from "@/lib/projects-sheet";
+import { usePathname, useRouter } from "next/navigation";
+import type { Locale, Messages } from "@/lib/i18n";
+
+interface Project {
+  title: string;
+  slug?: string;
+  image?: string;
+  description?: string;
+  shortDescription?: string;
+}
 
 interface ExperienceItem {
   title: string;
@@ -30,7 +38,6 @@ interface ProfileMessages {
   email?: string;
   about?: string;
   projectInvitation?: string;
-  emailText?: string;
   responseText?: string;
 }
 
@@ -47,9 +54,8 @@ interface SectionsMessages {
   downloadCV?: string;
 }
 
-interface HomePageClientProps {
-  pinProjectsEs: Project[];
-  pinProjectsEn: Project[];
+interface ProjectsMessages {
+  pinProjects?: Project[];
 }
 
 const SKILLS = [
@@ -76,47 +82,18 @@ const VARIANTS_CONTAINER = {
 };
 
 const VARIANTS_SECTION = {
-  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
 };
 
 const TRANSITION_SECTION = {
   duration: 0.3,
 };
 
-const MONTH_ABBR_ES = [
-  "Ene",
-  "Feb",
-  "Mar",
-  "Abr",
-  "May",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dic",
-];
-const MONTH_ABBR_EN = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const MONTH_ABBR_ES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const MONTH_ABBR_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function formatDateMonthYear(
-  dateStr: string | undefined,
-  isEnglish = false,
-): string | undefined {
+function formatDateMonthYear(dateStr: string | undefined, isEnglish = false): string | undefined {
   if (!dateStr) return dateStr;
   const months = isEnglish ? MONTH_ABBR_EN : MONTH_ABBR_ES;
   return dateStr
@@ -145,7 +122,7 @@ function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-2.5 py-1 text-sm text-black transition-colors duration-200 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
       >
         {children}
         <svg
@@ -168,21 +145,24 @@ function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
   );
 }
 
-export default function HomePageClient({
-  pinProjectsEs,
-  pinProjectsEn,
-}: HomePageClientProps) {
-  const { messages, changeLanguage, isEnglish } = useLanguage();
+interface HomePageClientProps {
+  locale: Locale;
+  messages: Messages;
+}
+
+export default function HomePageClient({ locale, messages }: HomePageClientProps) {
+  const isEnglish = locale === "en";
+  const router = useRouter();
+  const pathname = usePathname();
 
   const profileMessages = messages?.profile as ProfileMessages | undefined;
   const navMessages = messages?.nav as NavMessages | undefined;
   const sectionsMessages = messages?.sections as SectionsMessages | undefined;
+  const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   const experience = (messages?.experience || []) as ExperienceItem[];
   const education = (messages?.education || []) as EducationItem[];
 
-  const projectsToShow = (
-    isEnglish ? pinProjectsEn : pinProjectsEs
-  ).slice(0, 4);
+  const projectsToShow = projectsMessages?.pinProjects?.slice(0, 5) || [];
   const basePath = isEnglish ? "/en/projects" : "/projects";
   const email = profileMessages?.email || "palmiergianluca@gmail.com";
   const about = profileMessages?.about || "";
@@ -194,6 +174,17 @@ export default function HomePageClient({
     { label: "Instagram", link: socials.instagram },
   ];
 
+  const handleLanguageChange = () => {
+    if (!pathname) return;
+    if (isEnglish) {
+      const nextPath = pathname.replace(/^\/en/, "");
+      router.push(nextPath === "" ? "/" : nextPath);
+    } else {
+      const nextPath = pathname === "/" ? "/en" : `/en${pathname}`;
+      router.push(nextPath);
+    }
+  };
+
   return (
     <motion.main
       className="space-y-12"
@@ -201,7 +192,6 @@ export default function HomePageClient({
       initial="hidden"
       animate="visible"
     >
-      {/* Intro / About */}
       <motion.section
         id="about"
         className="scroll-mt-24"
@@ -210,11 +200,13 @@ export default function HomePageClient({
       >
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-zinc-600 dark:text-zinc-400">{about}</p>
+            <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+              {about}
+            </p>
           </div>
           <button
-            onClick={() => changeLanguage(isEnglish ? "es" : "en")}
-            className="ml-4 flex shrink-0 items-center gap-2 rounded-full bg-zinc-100 px-3 py-2 text-sm text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+            onClick={handleLanguageChange}
+            className="ml-4 flex shrink-0 items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 transition-colors hover:border-orange-500 hover:text-orange-500 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-orange-400 dark:hover:text-orange-400"
             aria-label="Cambiar idioma"
           >
             <Languages className="h-4 w-4" />
@@ -223,21 +215,20 @@ export default function HomePageClient({
         </div>
       </motion.section>
 
-      {/* Skills */}
       <motion.section
         id="skills"
         className="scroll-mt-24"
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">
+        <h3 className="mb-5 text-xl font-medium">
           {isEnglish ? "Skills" : "Habilidades"}
         </h3>
         <div className="flex flex-wrap gap-3">
           {SKILLS.map((skill) => (
             <div
               key={skill.label}
-              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-orange-400 dark:hover:text-orange-400"
             >
               <Image
                 src={skill.icon}
@@ -252,159 +243,143 @@ export default function HomePageClient({
         </div>
       </motion.section>
 
-      {/* Selected Projects */}
       <motion.section
         id="projects"
         className="scroll-mt-24"
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-lg font-medium">
-            {navMessages?.projects || "Proyectos"}
-          </h3>
-          <Link
-            href={basePath}
-            className="text-sm text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
-          >
-            {sectionsMessages?.viewAll || "Ver todos"}
-          </Link>
-        </div>
+        <h3 className="mb-5 text-xl font-medium">
+          {navMessages?.projects || "Proyectos"}
+        </h3>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {projectsToShow.map((project) => (
             <div key={project.title} className="space-y-2">
               <Link
                 href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                className="relative block rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset transition-opacity hover:opacity-90 dark:bg-zinc-950/40 dark:ring-zinc-800/50"
+                className="relative block rounded-2xl border border-zinc-200/50 bg-zinc-50/30 p-1 transition-opacity hover:opacity-90 dark:border-zinc-800/50 dark:bg-zinc-950/30"
               >
-                <div className="aspect-video w-full overflow-hidden rounded-xl">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                   {project.image ? (
                     <Image
                       src={project.image}
                       alt={project.title}
                       width={640}
                       height={360}
-                      className="aspect-video w-full object-cover transition-transform hover:scale-105"
+                      className="aspect-video w-full object-cover"
+                      sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : (
                     <div className="flex aspect-video w-full items-center justify-center bg-zinc-200 dark:bg-zinc-800">
-                      <span className="text-zinc-500">
-                        {isEnglish ? "No image" : "Sin imagen"}
-                      </span>
+                      <span className="text-zinc-500">{isEnglish ? "No image" : "Sin imagen"}</span>
                     </div>
                   )}
+                  <div className="pointer-events-none absolute inset-0 bg-zinc-900/[0.04] dark:bg-zinc-50/[0.04]" />
                 </div>
               </Link>
               <div className="px-1">
                 <Link
                   href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                  className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
+                  className="font-base inline-block font-[450] text-zinc-900 transition-colors hover:text-[#ff6200] dark:text-zinc-50 dark:hover:text-[#ff6200]"
                 >
                   {project.title}
-                  <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 transition-all duration-200 group-hover:max-w-full dark:bg-zinc-50" />
                 </Link>
-                <p className="text-base text-zinc-600 dark:text-zinc-400">
-                  {project.shortDescription ||
-                    (project.description?.slice(0, 100) + "...")}
+                <p className="text-base text-zinc-600 dark:text-zinc-300">
+                  {project.shortDescription || (project.description?.slice(0, 100) + "...")}
                 </p>
               </div>
             </div>
           ))}
         </div>
+        <Link
+          href={basePath}
+          className="mt-4 inline-block text-sm text-zinc-600 underline decoration-orange-500/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+        >
+          {sectionsMessages?.viewAll || "Ver todos"}
+        </Link>
       </motion.section>
 
-      {/* Experience */}
       <motion.section
         id="experience"
         className="scroll-mt-24"
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">
+        <h3 className="mb-6 text-xl font-medium">
           {navMessages?.experience || "Experiencia"}
         </h3>
-        <div className="space-y-6">
-          {experience.map((item) => (
-            <div key={`${item.title}-${item.date}`} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                  {item.title}
-                </p>
-                {item.date && (
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {formatDateMonthYear(item.date, isEnglish)}
-                  </p>
-                )}
+        <div className="flex flex-col gap-8">
+          {experience.map((job, i) => (
+            <div key={`${job.title}-${i}`} className="space-y-1">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                  {job.title}
+                  {job.company && (
+                    <span className="text-zinc-500 dark:text-zinc-300">
+                      {" "}· {job.company}
+                    </span>
+                  )}
+                </h4>
+                <span className="shrink-0 text-sm text-zinc-500 dark:text-zinc-300">
+                  {formatDateMonthYear(job.date, isEnglish)}
+                </span>
               </div>
-              {item.company && (
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {item.company}
-                </p>
-              )}
-              {item.description && (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {item.description}
-                </p>
-              )}
+              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                {job.description}
+              </p>
             </div>
           ))}
         </div>
       </motion.section>
 
-      {/* Education */}
       <motion.section
-        id="education"
-        className="scroll-mt-24"
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">
-          {sectionsMessages?.education || "Educacion & Certificaciones"}
+        <h3 className="mb-6 text-xl font-medium">
+          {sectionsMessages?.education || "Educación"}
         </h3>
-        <div className="space-y-6">
+        <div className="flex flex-col gap-8">
           {education.map((item) => (
-            <div key={`${item.title}-${item.date}`} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+            <div key={item.title} className="space-y-1">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
                   {item.title}
-                </p>
-                {item.date && (
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {formatDateMonthYear(item.date, isEnglish)}
-                  </p>
-                )}
+                  {item.institution && (
+                    <span className="text-zinc-500 dark:text-zinc-300">
+                      {" "}· {item.institution}
+                    </span>
+                  )}
+                </h4>
+                <span className="shrink-0 text-sm text-zinc-500 dark:text-zinc-300">
+                  {formatDateMonthYear(item.date, isEnglish)}
+                </span>
               </div>
-              {item.institution && (
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {item.institution}
-                </p>
-              )}
             </div>
           ))}
         </div>
       </motion.section>
 
-      {/* Contact */}
       <motion.section
         id="contact"
         className="scroll-mt-24"
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">
+        <h3 className="mb-5 text-xl font-medium">
           {navMessages?.contact || "Contacto"}
         </h3>
-        <p className="mb-4 text-zinc-600 dark:text-zinc-400">
-          {profileMessages?.projectInvitation || "¿Tenés un proyecto en mente? enviame un"}{" "}
+        <p className="mb-4 text-base text-zinc-600 dark:text-zinc-300">
+          {profileMessages?.projectInvitation || "¿Tenés un proyecto en mente? Envíame un"}{" "}
           <a
-            className="underline dark:text-zinc-300"
+            className="underline decoration-orange-500/70 underline-offset-4 dark:text-zinc-200"
             href={`mailto:${email}`}
           >
             {email}
           </a>
           {" "}{profileMessages?.responseText || "y te respondo al toque."}
         </p>
-        <div className="mb-8 rounded-2xl border border-zinc-200/50 bg-zinc-50/40 p-6 ring-1 ring-zinc-200/50 ring-inset dark:border-zinc-800/50 dark:bg-zinc-950/40 dark:ring-zinc-800/50">
+        <div className="mb-8 rounded-2xl border border-zinc-200/50 p-6 dark:border-zinc-800/50">
           <ContactForm />
         </div>
 
@@ -417,7 +392,7 @@ export default function HomePageClient({
           <Link
             href="/CV_Gianluca-Palmier.pdf"
             target="_blank"
-            className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-2.5 py-1 text-sm text-black transition-colors duration-200 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+            className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
           >
             {sectionsMessages?.downloadCV || "Descargar CV"}
           </Link>

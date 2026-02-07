@@ -1,16 +1,10 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import CaseStudyPage from "@/components/pages/CaseStudyPage";
-import {
-  getAllProjectSlugs,
-  getProjectBySlug,
-} from "@/lib/projects-sheet";
+import { getMessages } from "@/lib/i18n";
+import { PROJECT_SLUGS } from "@/lib/projects";
 
-export const dynamic = "force-static";
-
-export async function generateStaticParams() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map((slug) => ({ slug }));
+export function generateStaticParams() {
+  return PROJECT_SLUGS.map((slug) => ({ slug }));
 }
 
 interface PageProps {
@@ -19,21 +13,49 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug("en", slug);
+  const messages = getMessages("en");
+
+  interface Project {
+    slug?: string;
+    title: string;
+    shortDescription?: string;
+    description?: string;
+  }
+
+  const pinProjects = (messages?.projects?.pinProjects || []) as Project[];
+  const otherProjects = (messages?.projects?.otherProjects || []) as Project[];
+  const all = [...pinProjects, ...otherProjects];
+  const project = all.find((p) => p.slug === slug);
 
   if (!project) return { title: "Project not found" };
 
   return {
     title: `${project.title} | Case Study`,
     description: project.shortDescription || project.description?.slice(0, 160),
+    alternates: {
+      canonical: `/en/projects/${slug}`,
+      languages: {
+        es: `/projects/${slug}`,
+      },
+    },
+    openGraph: {
+      title: `${project.title} | Case Study`,
+      description: project.shortDescription || project.description?.slice(0, 160),
+      url: `/en/projects/${slug}`,
+      siteName: "Gianluca Palmier",
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} | Case Study`,
+      description: project.shortDescription || project.description?.slice(0, 160),
+    },
   };
 }
 
 export default async function ProjectCaseStudyPageEn({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug("en", slug);
-
-  if (!project) notFound();
-
-  return <CaseStudyPage project={project} />;
+  const messages = getMessages("en");
+  return <CaseStudyPage slug={slug} locale="en" messages={messages} />;
 }
