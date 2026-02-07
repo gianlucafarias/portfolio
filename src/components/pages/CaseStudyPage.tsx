@@ -90,14 +90,14 @@ export default function CaseStudyPage({ project, locale, messages }: CaseStudyPa
 
   return (
     <motion.article
-      className="space-y-8 lg:grid lg:grid-cols-[minmax(320px,420px)_1fr] lg:gap-16 lg:space-y-0 lg:items-start"
+      className="space-y-8 lg:grid lg:grid-cols-[minmax(200px,280px)_1fr] lg:gap-12 lg:space-y-0 lg:items-start"
       initial="hidden"
       animate="visible"
       variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
     >
       <div className="space-y-6 lg:sticky lg:top-24">
         <motion.header className="space-y-2" variants={VARIANTS} transition={{ duration: 0.3 }}>
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
             {project.title}
           </h1>
           {(project.caseStudy?.role || project.caseStudy?.year) && (

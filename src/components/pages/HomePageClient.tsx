@@ -243,9 +243,17 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-xl font-medium">
-          {navMessages?.projects || "Proyectos"}
-        </h3>
+        <div className="mb-5 flex items-center justify-between">
+          <h3 className="text-xl font-medium">
+            {navMessages?.projects || "Proyectos"}
+          </h3>
+          <Link
+            href={basePath}
+            className="text-sm text-zinc-600 underline decoration-orange-500/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+          >
+            {sectionsMessages?.viewAll || "Ver todos"}
+          </Link>
+        </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {projectsToShow.map((project) => (
             <div key={project.title} className="space-y-2">
@@ -285,12 +293,6 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             </div>
           ))}
         </div>
-        <Link
-          href={basePath}
-          className="mt-4 inline-block text-sm text-zinc-600 underline decoration-orange-500/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
-        >
-          {sectionsMessages?.viewAll || "Ver todos"}
-        </Link>
       </motion.section>
 
       <motion.section
