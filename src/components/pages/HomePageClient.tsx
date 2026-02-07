@@ -54,7 +54,7 @@ const SKILLS = [
   { label: "Next.js", icon: "/nextjs.svg" },
   { label: "Node.js", icon: "/node-js.svg" },
   { label: "NestJS", icon: "/nestjs.svg"},
-  { label: "Astro", icon: "/astro.svg"},
+  { label: "Astro", icon: "/Astro.svg"},
   { label: "Angular", icon: "/angular.svg" },
   { label: "Tailwind", icon: "/tailwind.svg" },
   { label: "PostgreSQL", icon: "/postgresql.svg" },

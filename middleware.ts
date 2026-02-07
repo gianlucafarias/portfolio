@@ -6,10 +6,12 @@ const EN_SUBDOMAIN = "en.gianluca.dev";
 
 function getLocale(request: NextRequest): NextResponse {
   const pathname = request.nextUrl.pathname;
-  const hostname = request.nextUrl.hostname;
+  // Usar header host (Vercel) en lugar de nextUrl.hostname
+  const hostHeader = request.headers.get("host") || request.headers.get("x-forwarded-host") || "";
+  const hostname = hostHeader.split(":")[0];
 
   // Si el host es en.gianluca.dev, siempre servir contenido en inglés
-  if (hostname === EN_SUBDOMAIN) {
+  if (hostname === EN_SUBDOMAIN || hostname.startsWith("en.")) {
     const pathnameHasEn = pathname.startsWith("/en") || pathname === "/en";
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-locale", "en");
