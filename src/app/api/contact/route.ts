@@ -57,6 +57,44 @@ function invalidResponse(message: string) {
   return NextResponse.json({ success: false, message }, { status: 400 });
 }
 
+function normalizeOrigin(value: string | null | undefined) {
+  if (!value) return null;
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+function getRequestOrigin(request: NextRequest) {
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+
+  if (forwardedHost) {
+    const protocol = forwardedProto || request.nextUrl.protocol.replace(":", "") || "https";
+    return `${protocol}://${forwardedHost}`;
+  }
+
+  return request.nextUrl.origin;
+}
+
+function getAllowedOrigins(request: NextRequest) {
+  const origins = new Set<string>();
+  const configuredSiteUrl = normalizeOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+  const requestOrigin = normalizeOrigin(getRequestOrigin(request));
+
+  if (configuredSiteUrl) {
+    origins.add(configuredSiteUrl);
+  }
+
+  if (requestOrigin) {
+    origins.add(requestOrigin);
+  }
+
+  return origins;
+}
+
 function getClientIp(request: NextRequest) {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
@@ -80,13 +118,23 @@ function isRateLimited(ip: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const origin = request.headers.get("origin") || "";
-    const referer = request.headers.get("referer") || "";
-    if (origin && !origin.startsWith(siteUrl)) {
+    const allowedOrigins = getAllowedOrigins(request);
+    const origin = normalizeOrigin(request.headers.get("origin"));
+    const referer = normalizeOrigin(request.headers.get("referer"));
+
+    if (origin && !allowedOrigins.has(origin)) {
+      console.warn("Rejected contact request due to invalid origin", {
+        origin,
+        allowedOrigins: Array.from(allowedOrigins),
+      });
       return NextResponse.json({ success: false, message: "Origen invalido." }, { status: 403 });
     }
-    if (!origin && referer && !referer.startsWith(siteUrl)) {
+
+    if (!origin && referer && !allowedOrigins.has(referer)) {
+      console.warn("Rejected contact request due to invalid referer", {
+        referer,
+        allowedOrigins: Array.from(allowedOrigins),
+      });
       return NextResponse.json({ success: false, message: "Origen invalido." }, { status: 403 });
     }
 

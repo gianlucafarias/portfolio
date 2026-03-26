@@ -385,13 +385,14 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
               {link.label}
             </MagneticSocialLink>
           ))}
-          <Link
+          <a
             href="/CV_Gianluca_Palmier.pdf"
             target="_blank"
+            rel="noreferrer"
             className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
           >
             {sectionsMessages?.downloadCV || "Descargar CV"}
-          </Link>
+          </a>
         </div>
       </motion.section>
     </motion.main>
