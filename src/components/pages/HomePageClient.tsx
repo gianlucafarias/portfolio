@@ -7,8 +7,7 @@ import { socials } from "@/data/constants";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/forms/ContactForm";
-import { Languages } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import ProjectCard from "@/components/ui/ProjectCard";
 import type { Locale, Messages } from "@/lib/i18n";
 import type { Project } from "@/lib/projects-sheet";
 
@@ -47,9 +46,8 @@ interface SectionsMessages {
   downloadCV?: string;
 }
 
-
 const SKILLS = [
-  { label: "Typescript", icon: "/ts.svg" },
+  { label: "TypeScript", icon: "/ts.svg" },
   { label: "React", icon: "/react.svg" },
   { label: "Next.js", icon: "/nextjs.svg" },
   { label: "Node.js", icon: "/node-js.svg" },
@@ -144,8 +142,6 @@ interface HomePageClientProps {
 
 export default function HomePageClient({ locale, messages, pinProjects }: HomePageClientProps) {
   const isEnglish = locale === "en";
-  const router = useRouter();
-  const pathname = usePathname();
 
   const profileMessages = messages?.profile as ProfileMessages | undefined;
   const navMessages = messages?.nav as NavMessages | undefined;
@@ -159,22 +155,20 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
   const about = profileMessages?.about || "";
 
   const socialLinks = [
-    { label: "Github", link: socials.github },
-    { label: "Twitter", link: socials.twitter },
+    { label: "GitHub", link: socials.github },
     { label: "LinkedIn", link: socials.linkedin },
-    { label: "Instagram", link: socials.instagram },
   ];
 
-  const handleLanguageChange = () => {
-    if (!pathname) return;
-    if (isEnglish) {
-      const nextPath = pathname.replace(/^\/en/, "");
-      router.push(nextPath === "" ? "/" : nextPath);
-    } else {
-      const nextPath = pathname === "/" ? "/en" : `/en${pathname}`;
-      router.push(nextPath);
-    }
-  };
+  const primaryLinks = [
+    {
+      label: sectionsMessages?.downloadCV || (isEnglish ? "Download CV" : "Descargar CV"),
+      href: "/CV_Gianluca_Palmier.pdf",
+      external: true,
+    },
+    { label: "LinkedIn", href: socials.linkedin, external: true },
+    { label: "GitHub", href: socials.github, external: true },
+    { label: isEnglish ? "View projects" : "Ver proyectos", href: "#projects" },
+  ];
 
   return (
     <motion.main
@@ -192,48 +186,33 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
          <h3 className="mb-5 text-xl font-medium">
           {isEnglish ? "About me" : "Sobre mí"}
         </h3>
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
-              {about}
-            </p>
+        <div className="space-y-5">
+          <p className="max-w-[68ch] text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+            {about}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {primaryLinks.map((link) =>
+              link.external ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-orange-500 hover:text-orange-500 active:translate-y-px dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-orange-500 hover:text-orange-500 active:translate-y-px dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </div>
-          <button
-            onClick={handleLanguageChange}
-            className="ml-4 flex shrink-0 items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 transition-colors hover:border-orange-500 hover:text-orange-500 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-orange-400 dark:hover:text-orange-400"
-            aria-label="Cambiar idioma"
-          >
-            <Languages className="h-4 w-4" />
-            <span>{isEnglish ? "ES" : "EN"}</span>
-          </button>
-        </div>
-      </motion.section>
-
-      <motion.section
-        id="skills"
-        className="scroll-mt-24"
-        variants={VARIANTS_SECTION}
-        transition={TRANSITION_SECTION}
-      >
-        <h3 className="mb-5 text-xl font-medium">
-          {isEnglish ? "Skills" : "Habilidades"}
-        </h3>
-        <div className="flex flex-wrap gap-3">
-          {SKILLS.map((skill) => (
-            <div
-              key={skill.label}
-              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-50"
-            >
-              <Image
-                src={skill.icon}
-                alt={skill.label}
-                width={16}
-                height={16}
-                className="h-4 w-4 opacity-70 brightness-0 transition-all group-hover:opacity-100 dark:brightness-0 dark:invert dark:group-hover:opacity-100"
-              />
-              <span>{skill.label}</span>
-            </div>
-          ))}
         </div>
       </motion.section>
 
@@ -254,42 +233,42 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             {sectionsMessages?.viewAll || "Ver todos"}
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
           {projectsToShow.map((project) => (
-            <div key={project.title} className="space-y-2">
-              <Link
-                href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                className="relative block rounded-2xl border border-zinc-200/50 bg-zinc-50/30 p-1 transition-opacity hover:opacity-90 dark:border-zinc-800/50 dark:bg-zinc-950/30"
-              >
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-                  {project.image ? (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      width={640}
-                      height={360}
-                      className="aspect-video w-full object-cover"
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                    />
-                  ) : (
-                    <div className="flex aspect-video w-full items-center justify-center bg-zinc-200 dark:bg-zinc-800">
-                      <span className="text-zinc-500">{isEnglish ? "No image" : "Sin imagen"}</span>
-                    </div>
-                  )}
-                  <div className="pointer-events-none absolute inset-0 bg-zinc-900/[0.04] dark:bg-zinc-50/[0.04]" />
-                </div>
-              </Link>
-              <div className="px-1">
-                <Link
-                  href={project.slug ? `${basePath}/${project.slug}` : basePath}
-                  className="font-base inline-block font-[450] text-zinc-900 transition-colors hover:text-[#ff6200] dark:text-zinc-50 dark:hover:text-[#ff6200]"
-                >
-                  {project.title}
-                </Link>
-                <p className="text-base text-zinc-600 dark:text-zinc-300">
-                  {project.shortDescription || (project.description?.slice(0, 100) + "...")}
-                </p>
-              </div>
+            <ProjectCard
+              key={project.title}
+              project={project}
+              href={project.slug ? `${basePath}/${project.slug}` : basePath}
+              compact
+              noImageText={isEnglish ? "No image" : "Sin imagen"}
+            />
+          ))}
+        </div>
+      </motion.section>
+
+      <motion.section
+        id="skills"
+        className="scroll-mt-24"
+        variants={VARIANTS_SECTION}
+        transition={TRANSITION_SECTION}
+      >
+        <h3 className="mb-5 text-xl font-medium">
+          {isEnglish ? "Capabilities" : "Capacidades"}
+        </h3>
+        <div className="flex flex-wrap gap-2.5">
+          {SKILLS.map((skill) => (
+            <div
+              key={skill.label}
+              className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 px-2.5 py-1 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-50"
+            >
+              <Image
+                src={skill.icon}
+                alt={skill.label}
+                width={16}
+                height={16}
+                className="h-4 w-4 opacity-70 brightness-0 transition-all group-hover:opacity-100 dark:brightness-0 dark:invert dark:group-hover:opacity-100"
+              />
+              <span>{skill.label}</span>
             </div>
           ))}
         </div>
@@ -375,11 +354,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
           </a>
           {" "}{profileMessages?.responseText || "y te respondo al toque."}
         </p>
-        <div className="mb-8 rounded-2xl border border-zinc-200/50 p-6 dark:border-zinc-800/50">
-          <ContactForm />
-        </div>
-
-        <div className="flex flex-wrap items-center justify-start gap-3">
+        <div className="mb-8 flex flex-wrap items-center justify-start gap-3">
           {socialLinks.map((link) => (
             <MagneticSocialLink key={link.label} link={link.link}>
               {link.label}
@@ -393,6 +368,9 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
           >
             {sectionsMessages?.downloadCV || "Descargar CV"}
           </a>
+        </div>
+        <div className="rounded-xl border border-zinc-200/50 p-5 dark:border-zinc-800/50">
+          <ContactForm />
         </div>
       </motion.section>
     </motion.main>

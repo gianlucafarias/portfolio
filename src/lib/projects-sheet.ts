@@ -1,6 +1,7 @@
 import "server-only";
 
 import { google } from "googleapis";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
 export interface CaseStudy {
@@ -25,6 +26,11 @@ export interface Project {
   image?: string;
   description?: string;
   shortDescription?: string;
+  status?: string;
+  type?: string;
+  impactHighlight?: string;
+  proof?: string;
+  recruiterSummary?: string;
   tags?: string[];
   link?: string;
   github?: string;
@@ -36,6 +42,11 @@ interface ProjectRow {
 }
 
 const PROJECTS_SHEET_TAB = process.env.PROJECTS_SHEET_TAB || "projects";
+const PROJECT_ROWS_CACHE_TTL_MS = 60 * 60 * 1000;
+let projectRowsMemoryCache:
+  | { rows: ProjectRow[]; expiresAt: number }
+  | undefined;
+let projectRowsInFlight: Promise<ProjectRow[]> | undefined;
 
 const getRequiredEnv = (key: string): string => {
   const value = process.env[key];
@@ -120,6 +131,11 @@ const buildProjectFromRow = (
     title,
     description,
     shortDescription,
+    status: getLocaleValue(row, "status", locale),
+    type: getLocaleValue(row, "project_type", locale),
+    impactHighlight: getLocaleValue(row, "impact_highlight", locale),
+    proof: getLocaleValue(row, "proof", locale),
+    recruiterSummary: getLocaleValue(row, "recruiter_summary", locale),
     image: row.image?.trim() || undefined,
     link: row.link?.trim() || undefined,
     github: row.github?.trim() || undefined,
@@ -160,7 +176,38 @@ const buildProjectFromRow = (
   return project;
 };
 
-const fetchProjectRows = cache(async (): Promise<ProjectRow[]> => {
+const fetchProjectRowsFromSheet = async (): Promise<ProjectRow[]> => {
+  const now = Date.now();
+  if (projectRowsMemoryCache && projectRowsMemoryCache.expiresAt > now) {
+    return projectRowsMemoryCache.rows;
+  }
+
+  if (projectRowsInFlight) {
+    return projectRowsInFlight;
+  }
+
+  projectRowsInFlight = readProjectRowsFromSheet()
+    .then((rows) => {
+      projectRowsMemoryCache = {
+        rows,
+        expiresAt: Date.now() + PROJECT_ROWS_CACHE_TTL_MS,
+      };
+      return rows;
+    })
+    .catch((error) => {
+      if (projectRowsMemoryCache) {
+        return projectRowsMemoryCache.rows;
+      }
+      throw error;
+    })
+    .finally(() => {
+      projectRowsInFlight = undefined;
+    });
+
+  return projectRowsInFlight;
+};
+
+const readProjectRowsFromSheet = async (): Promise<ProjectRow[]> => {
   const sheets = await getSheetsClient();
   const spreadsheetId = getRequiredEnv("NEXT_PUBLIC_SHEET_ID");
 
@@ -186,7 +233,13 @@ const fetchProjectRows = cache(async (): Promise<ProjectRow[]> => {
     });
     return record;
   });
-});
+};
+
+const fetchProjectRows = cache(
+  unstable_cache(fetchProjectRowsFromSheet, ["portfolio-project-rows"], {
+    revalidate: 3600,
+  }),
+);
 
 export const getProjectsByLocale = cache(async (locale: "es" | "en") => {
   const rows = await fetchProjectRows();

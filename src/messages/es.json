@@ -1,6 +1,6 @@
 {
   "nav": {
-    "about": "Sobre mi",
+    "about": "Sobre mí",
     "projects": "Proyectos",
     "experience": "Experiencia",
     "contact": "Contacto"
@@ -12,17 +12,17 @@
   },
   "profile": {
     "name": "Gianluca Palmier",
-    "role": "Técnico Universitario en Programación - Full Stack Engineer",
-    "about": "Soy Fullstack Engineer especializado en construir productos web y móviles desde cero hasta producción.",
+    "role": "Full Stack Product Engineer",
+    "about": "Diseño, desarrollo y mantengo productos digitales de punta a punta: chatbots, plataformas web, apps móviles, backends e integraciones. Trabajo desde la definición del problema y los flujos de usuario hasta arquitectura, desarrollo, despliegue y operación en producción.",
     "email": "palmiergianluca@gmail.com",
-    "projectInvitation": "¿Tenés un proyecto en mente? enviame un correo a",
+    "projectInvitation": "Estoy abierto a oportunidades Full Stack, Frontend o Backend. Si mi perfil encaja con tu búsqueda, escribime a",
     "emailText": "Mail",
     "responseText": "y te respondo al toque."
   },
   "seo": {
-    "title": "Gianluca Palmier | Técnico Universitario en Programación - Full Stack Developer",
-    "description": "Desarrollador Full-Stack con experiencia práctica en el desarrollo de aplicaciones web utilizando frameworks como React y Angular, junto con herramientas como Next.js y Node. Me adapto rápidamente a nuevos desafíos y busco contribuir con soluciones eficientes que mejoren procesos de forma concreta.",
-    "keywords": "portfolio, web developer, Next.js, developer portfolio, minimal portfolio"
+    "title": "Gianluca Palmier | Full Stack Product Engineer",
+    "description": "Product Engineer con base Full Stack. Construyo productos digitales end-to-end: chatbots, plataformas web, apps móviles, backends e integraciones en producción.",
+    "keywords": "product engineer, full stack developer, chatbots, mobile apps, Next.js, Node.js, product engineering"
   },
   "projects": {
     "pinned": "Proyectos Destacados",

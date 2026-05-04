@@ -12,17 +12,17 @@
   },
   "profile": {
     "name": "Gianluca Palmier",
-    "role": "University Programming Technician - Full Stack Developer",
-    "about": "Full Stack Engineer focused on building web and mobile products from scratch to production.",
+    "role": "Full Stack Product Engineer",
+    "about": "I design, build and maintain digital products end-to-end: chatbots, web platforms, mobile apps, backends and integrations. I work from problem definition and user flows to architecture, development, deployment and production operation.",
     "email": "palmiergianluca@gmail.com",
-    "projectInvitation": "Have a project in mind? email to",
+    "projectInvitation": "I'm open to Full Stack, Frontend or Backend opportunities. If my profile fits your search, email me at",
     "emailText": "Email",
     "responseText": "and I'll get back to you right away."
   },
   "seo": {
-    "title": "Gianluca Palmier | University Technician in Programming - Full Stack Developer",
-    "description": "Full-Stack developer with practical experience in web application development using frameworks like React and Angular, along with tools like Next.js and Node. I quickly adapt to new challenges and seek to contribute efficient solutions that improve processes in concrete ways.",
-    "keywords": "portfolio, web developer, Next.js, developer portfolio, minimal portfolio"
+    "title": "Gianluca Palmier | Full Stack Product Engineer",
+    "description": "Product Engineer with a Full Stack foundation. I build end-to-end digital products: chatbots, web platforms, mobile apps, backends and production integrations.",
+    "keywords": "product engineer, full stack developer, chatbots, mobile apps, Next.js, Node.js, product engineering"
   },
   "projects": {
     "pinned": "Featured Projects",

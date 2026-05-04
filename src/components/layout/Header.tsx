@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
+import { Languages } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Header() {
   const { messages, isEnglish } = useLanguage();
   const pathname = usePathname();
+  const router = useRouter();
   
   const profileMessages = messages?.profile as { name?: string; role?: string } | undefined;
   const navMessages = messages?.nav as { about?: string; projects?: string; experience?: string; contact?: string } | undefined;
@@ -32,25 +34,30 @@ export function Header() {
       ? "University Programming Technician - Full Stack Developer"
       : "Técnico Universitario en Programación - Full Stack Developer");
 
+  const handleLanguageChange = () => {
+    if (!pathname) return;
+    if (isEnglish) {
+      const nextPath = pathname.replace(/^\/en/, "");
+      router.push(nextPath === "" ? "/" : nextPath);
+    } else {
+      const nextPath = pathname === "/" ? "/en" : `/en${pathname}`;
+      router.push(nextPath);
+    }
+  };
+
   return (
     <motion.header
-      className="mb-8 flex items-center justify-between"
+      className="mb-8 flex items-start justify-between gap-4"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
     >
-      <div>
+      <div className="min-w-0">
         <Link
           href={isEnglish ? "/en" : "/"}
-          className="group/name relative inline-flex items-baseline gap-1.5 text-lg font-medium text-black dark:text-white"
+          className="relative inline-flex items-baseline text-lg font-medium text-black dark:text-white"
         >
           <span>{profileMessages?.name || "Gianluca Palmier"}</span>
-          <span
-            className="inline-block translate-y-1 opacity-0 transition-all duration-200 group-hover/name:translate-y-0 group-hover/name:opacity-100"
-            aria-hidden
-          >
-            🇦🇷
-          </span>
         </Link>
         <motion.p
           key={isEnglish ? "en" : "es"}
@@ -92,6 +99,14 @@ export function Header() {
           </Link>
         </nav>
       </div>
+      <button
+        onClick={handleLanguageChange}
+        className="mt-1 flex shrink-0 items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 transition-colors hover:border-orange-500 hover:text-orange-500 active:translate-y-px dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-orange-400 dark:hover:text-orange-400"
+        aria-label={isEnglish ? "Switch language to Spanish" : "Cambiar idioma a inglés"}
+      >
+        <Languages className="h-4 w-4" />
+        <span>{isEnglish ? "ES" : "EN"}</span>
+      </button>
     </motion.header>
   );
 }

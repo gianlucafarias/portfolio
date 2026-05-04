@@ -51,6 +51,24 @@ export default function CaseStudyPage({ project, locale, messages }: CaseStudyPa
   const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   const labels = projectsMessages?.caseStudy || {};
   const base = isEnglish ? "/en/projects" : "/projects";
+  const snapshotItems = [
+    project.status && {
+      label: isEnglish ? "Status" : "Estado",
+      value: project.status,
+    },
+    project.type && {
+      label: isEnglish ? "Type" : "Tipo",
+      value: project.type,
+    },
+    project.impactHighlight && {
+      label: isEnglish ? "Impact" : "Impacto",
+      value: project.impactHighlight,
+    },
+    project.proof && {
+      label: isEnglish ? "Proof" : "Evidencia",
+      value: project.proof,
+    },
+  ].filter(Boolean) as Array<{ label: string; value: string }>;
 
   const CtaLinks = ({ project, labels }: CtaLinksProps) => {
     if (!project.link && !project.github) return null;
@@ -131,6 +149,24 @@ export default function CaseStudyPage({ project, locale, messages }: CaseStudyPa
         <motion.div variants={VARIANTS} transition={{ duration: 0.3 }}>
           <CtaLinks project={project} labels={labels} />
         </motion.div>
+        {snapshotItems.length > 0 && (
+          <motion.dl
+            className="space-y-3 rounded-xl border border-zinc-200/70 bg-zinc-50/50 p-4 dark:border-zinc-800/70 dark:bg-zinc-950/30"
+            variants={VARIANTS}
+            transition={{ duration: 0.3 }}
+          >
+            {snapshotItems.map((item) => (
+              <div key={item.label} className="space-y-1">
+                <dt className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                  {item.label}
+                </dt>
+                <dd className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </motion.dl>
+        )}
         <Link
           href={base}
           className="inline-flex text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
@@ -145,7 +181,7 @@ export default function CaseStudyPage({ project, locale, messages }: CaseStudyPa
             {labels.overview || "Overview"}
           </h2>
           <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
-            {project.description}
+            {project.recruiterSummary || project.description}
           </p>
         </motion.section>
 
