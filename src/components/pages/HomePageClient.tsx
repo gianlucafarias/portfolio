@@ -153,6 +153,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
   const basePath = isEnglish ? "/en/projects" : "/projects";
   const email = profileMessages?.email || "palmiergianluca@gmail.com";
   const about = profileMessages?.about || "";
+  const cvPdfHref = isEnglish ? "/CV_Gianluca_Palmier_en.pdf" : "/CV_Gianluca_Palmier.pdf";
 
   const socialLinks = [
     { label: "GitHub", link: socials.github },
@@ -162,7 +163,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
   const primaryLinks = [
     {
       label: sectionsMessages?.downloadCV || (isEnglish ? "Download CV" : "Descargar CV"),
-      href: "/CV_Gianluca_Palmier.pdf",
+      href: cvPdfHref,
       external: true,
     },
     { label: "LinkedIn", href: socials.linkedin, external: true },
@@ -361,7 +362,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             </MagneticSocialLink>
           ))}
           <a
-            href="/CV_Gianluca_Palmier.pdf"
+            href={cvPdfHref}
             target="_blank"
             rel="noreferrer"
             className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
