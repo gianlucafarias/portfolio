@@ -292,16 +292,10 @@
   },
   "experience": [
     {
-      "title": "Full Stack Developer",
+      "title": "Tech Lead / Full Stack Engineer",
       "company": "Government of Ceres City",
-      "description": "Develop complete web solutions for the modernization area, covering internal and external applications. Responsible for the entire development cycle: requirements gathering, design, development, deployment and maintenance. Reduced external service dependencies by implementing own solutions.",
-      "date": "01/01/2024 - Currently"
-    },
-    {
-      "title": "Motion Graphic Designer",
-      "company": "Government of Ceres City",
-      "description": "Creation of graphic animations and advertising spots for the city government using After Effects and Premiere. Development of visual content for institutional communication campaigns.",
-      "date": "01/05/2021 - 01/01/2024"
+      "description": "Leading architecture and execution of end-to-end citizen digital products — chatbots, web platforms, backends and production integrations. I drove frontend, backend and operational technical decisions across multiple concurrent products, prioritizing scalability, observability and continuous delivery.",
+      "date": "01/04/2021 - 01/06/2026"
     },
     {
       "title": "Wordpress Developer",
