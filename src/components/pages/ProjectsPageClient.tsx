@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
-import ProjectCard from "@/components/ui/ProjectCard";
+import ProjectHoverList from "@/components/ui/ProjectHoverList";
 import type { Locale, Messages } from "@/lib/i18n";
 import type { Project } from "@/lib/projects-sheet";
 
@@ -68,16 +68,11 @@ export default function ProjectsPageClient({ locale, messages, pinProjects, othe
             ← {isEnglish ? "Home" : "Inicio"}
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {allProjects.map((project) => (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              href={project.slug ? `${basePath}/${project.slug}` : basePath}
-              noImageText={isEnglish ? "No image" : "Sin imagen"}
-            />
-          ))}
-        </div>
+        <ProjectHoverList
+          projects={allProjects}
+          basePath={basePath}
+          noImageText={isEnglish ? "No image" : "Sin imagen"}
+        />
       </motion.section>
     </motion.main>
   );

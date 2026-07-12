@@ -9,6 +9,7 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/next";
+import PortfolioShell from "@/components/layout/PortfolioShell";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -79,9 +80,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 interface RootLayoutProps {
   children: ReactNode;
+  project: ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children, project }: RootLayoutProps) {
   const headersList = await headers();
   const localeHeader = headersList.get("x-locale");
   const locale = localeHeader === "en" ? "en" : "es";
@@ -118,16 +120,16 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="font-sans bg-white tracking-tight antialiased dark:bg-zinc-950">
+      <body className="font-sans bg-white antialiased dark:bg-zinc-950">
         <ThemeProvider>
           <LanguageProvider initialLocale={locale} initialMessages={messages}>
             <div className="flex min-h-screen w-full flex-col">
-              <div className="relative mx-auto w-full max-w-screen-md flex-1 px-4 pt-20">
+              <PortfolioShell project={project}>
                 <Header />
                 {children}
                 <Analytics/>
                 <Footer />
-              </div>
+              </PortfolioShell>
             </div>
           </LanguageProvider>
         </ThemeProvider>

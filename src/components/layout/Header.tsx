@@ -5,13 +5,19 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Languages } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ProfileHoverName from "@/components/ui/ProfileHoverName";
+import RotatingRoleTag from "@/components/ui/RotatingRoleTag";
 
 export function Header() {
   const { messages, isEnglish } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   
-  const profileMessages = messages?.profile as { name?: string; role?: string } | undefined;
+  const profileMessages = messages?.profile as {
+    name?: string;
+    role?: string;
+    roleTags?: string[];
+  } | undefined;
   const navMessages = messages?.nav as { about?: string; projects?: string; experience?: string; contact?: string } | undefined;
 
   const safePathname = pathname ?? "/";
@@ -28,11 +34,16 @@ export function Header() {
   const isActiveExperience = false;
   const isActiveContact = isContact;
   
-  const roleText =
-    profileMessages?.role ||
-    (isEnglish
-      ? "University Programming Technician - Full Stack Developer"
-      : "Técnico Universitario en Programación - Full Stack Developer");
+  const roleTags =
+    profileMessages?.roleTags?.filter(Boolean) ??
+    [
+      profileMessages?.role ||
+        (isEnglish
+          ? "University Programming Technician - Full Stack Developer"
+          : "Técnico Universitario en Programación - Full Stack Developer"),
+    ];
+
+  const displayName = profileMessages?.name || "Gianluca Palmier";
 
   const handleLanguageChange = () => {
     if (!pathname) return;
@@ -55,19 +66,13 @@ export function Header() {
       <div className="min-w-0">
         <Link
           href={isEnglish ? "/en" : "/"}
-          className="relative inline-flex items-baseline text-lg font-medium text-black dark:text-white"
+          className="relative inline-flex items-baseline font-display text-2xl font-medium tracking-wide text-black dark:text-white"
         >
-          <span>{profileMessages?.name || "Gianluca Palmier"}</span>
+          <ProfileHoverName imageAlt={displayName}>
+            {displayName}
+          </ProfileHoverName>
         </Link>
-        <motion.p
-          key={isEnglish ? "en" : "es"}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.4 }}
-          className="text-zinc-600 dark:text-zinc-300"
-        >
-          {roleText}
-        </motion.p>
+        <RotatingRoleTag key={isEnglish ? "en" : "es"} tags={roleTags} />
         <nav className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <Link
             href={isEnglish ? "/en#about" : "/#about"}

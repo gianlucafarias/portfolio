@@ -1,14 +1,16 @@
 "use client";
 
-import { ReactNode } from "react";
-import { motion } from "motion/react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { createPortal } from "react-dom";
 import { Magnetic } from "@/components/ui/magnetic";
 import { socials } from "@/data/constants";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/forms/ContactForm";
-import ProjectCard from "@/components/ui/ProjectCard";
+import ProjectHoverList from "@/components/ui/ProjectHoverList";
 import type { Locale, Messages } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/lib/projects-sheet";
 
 interface ExperienceItem {
@@ -104,6 +106,202 @@ interface MagneticSocialLinkProps {
   link: string;
 }
 
+interface HoverPillWordProps {
+  children: ReactNode;
+  pills: string[];
+}
+
+interface HoverPillPlacement {
+  label: string;
+  left: number;
+  top: number;
+  originX: number;
+  originY: number;
+  rotate: number;
+}
+
+function getHoverPillPlacements(
+  wordRect: DOMRect,
+  layoutRect: DOMRect,
+  pills: string[],
+): HoverPillPlacement[] {
+  if (window.innerWidth < 1280) {
+    return [];
+  }
+
+  const wordCenterX = wordRect.left + wordRect.width / 2;
+  const wordCenterY = wordRect.top + wordRect.height / 2;
+  const originLeft = wordCenterX - 44;
+  const originTop = wordCenterY - 14;
+  const leftColumn = Math.max(24, layoutRect.left - 168);
+  const rightColumn = Math.min(
+    window.innerWidth - 24,
+    layoutRect.right + 12,
+  );
+
+  return [
+    { label: pills[0], left: leftColumn, top: wordCenterY - 46, rotate: -3 },
+    { label: pills[1], left: leftColumn + 62, top: wordCenterY + 46, rotate: 2 },
+    { label: pills[2], left: rightColumn, top: wordCenterY - 38, rotate: 2 },
+    { label: pills[3], left: rightColumn + 36, top: wordCenterY + 54, rotate: -3 },
+  ]
+    .filter((pill) => pill.label)
+    .map((pill) => ({
+      ...pill,
+      originX: originLeft - pill.left,
+      originY: originTop - pill.top,
+    }));
+}
+
+function HoverPillWord({ children, pills }: HoverPillWordProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [placements, setPlacements] = useState<HoverPillPlacement[]>([]);
+  const wordRef = useRef<HTMLSpanElement>(null);
+
+  const updatePlacements = useCallback(() => {
+    const wordEl = wordRef.current;
+    const layoutEl = wordEl?.closest("main");
+
+    if (!wordEl || !layoutEl) {
+      return [];
+    }
+
+    const nextPlacements = getHoverPillPlacements(
+      wordEl.getBoundingClientRect(),
+      layoutEl.getBoundingClientRect(),
+      pills,
+    );
+
+    setPlacements(nextPlacements);
+    return nextPlacements;
+  }, [pills]);
+
+  const showPills = useCallback(() => {
+    const nextPlacements = updatePlacements();
+    setIsActive(nextPlacements.length > 0);
+  }, [updatePlacements]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    window.addEventListener("resize", updatePlacements);
+    window.addEventListener("scroll", updatePlacements, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePlacements);
+      window.removeEventListener("scroll", updatePlacements, true);
+    };
+  }, [isActive, updatePlacements]);
+
+  return (
+    <>
+      <span
+        ref={wordRef}
+        className="inline-block cursor-default text-zinc-800 underline decoration-orange-500/80 decoration-dotted decoration-[1.5px] underline-offset-4 outline-none transition-colors hover:text-zinc-950 focus-visible:text-zinc-950 dark:text-zinc-100 dark:hover:text-white dark:focus-visible:text-white"
+        tabIndex={0}
+        onFocus={showPills}
+        onBlur={() => setIsActive(false)}
+        onPointerEnter={showPills}
+        onPointerMove={() => {
+          if (!isActive) showPills();
+        }}
+        onPointerLeave={() => setIsActive(false)}
+      >
+        {children}
+      </span>
+      {isMounted &&
+        createPortal(
+          <AnimatePresence>
+            {isActive && placements.length > 0 && (
+              <div className="pointer-events-none fixed inset-0 z-50">
+                {placements.map((pill, index) => (
+                  <motion.span
+                    key={pill.label}
+                    aria-hidden="true"
+                    className={cn(
+                      "fixed whitespace-nowrap rounded-full border border-zinc-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-700 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 dark:text-zinc-200",
+                    )}
+                    style={{ left: pill.left, top: pill.top }}
+                    initial={{
+                      opacity: 0,
+                      x: pill.originX,
+                      y: pill.originY,
+                      scale: 0.72,
+                      rotate: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      y: 0,
+                      scale: 1,
+                      rotate: pill.rotate,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      x: pill.originX,
+                      y: pill.originY,
+                      scale: 0.72,
+                      rotate: 0,
+                    }}
+                    transition={{
+                      delay: index * 0.04,
+                      duration: 0.34,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    {pill.label}
+                  </motion.span>
+                ))}
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+function AboutIntro({ isEnglish, fallback }: { isEnglish: boolean; fallback: string }) {
+  if (isEnglish) {
+    return (
+      <p className="max-w-[68ch] text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+        I design, build, and maintain{" "}
+        <HoverPillWord pills={["Web", "Mobile App", "Chatbots", "Backend solutions"]}>
+          digital products
+        </HoverPillWord>{" "}
+        end to end: chatbots, web platforms, mobile apps, backends, and integrations. I work from problem definition and user flows to architecture, development, deployment, and{" "}
+        <HoverPillWord pills={["APIs", "Reliability", "Deploy", "Scalability"]}>
+          production
+        </HoverPillWord>
+        .
+      </p>
+    );
+  }
+
+  if (!fallback) {
+    return null;
+  }
+
+  return (
+    <p className="max-w-[68ch] text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+      Diseño, desarrollo y mantengo{" "}
+      <HoverPillWord pills={["Web", "Aplicaciones", "Chatbots", "Soluciones backend"]}>
+        productos digitales
+      </HoverPillWord>{" "}
+      de punta a punta: chatbots, plataformas web, apps móviles, backends e integraciones. Trabajo desde la definición del problema y los flujos de usuario hasta arquitectura, desarrollo, despliegue y operación en{" "}
+      <HoverPillWord pills={["Documentación", "Confiabilidad", "Despliegues", "Escalabilidad"]}>
+        producción
+      </HoverPillWord>
+      .
+    </p>
+  );
+}
+
 function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
   return (
     <Magnetic springOptions={{ bounce: 0 }} intensity={0.3}>
@@ -188,9 +386,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
           {isEnglish ? "About me" : "Sobre mí"}
         </h3>
         <div className="space-y-5">
-          <p className="max-w-[68ch] text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
-            {about}
-          </p>
+          <AboutIntro isEnglish={isEnglish} fallback={about} />
           <div className="flex flex-wrap gap-3">
             {primaryLinks.map((link) =>
               link.external ? (
@@ -234,17 +430,12 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             {sectionsMessages?.viewAll || "Ver todos"}
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {projectsToShow.map((project) => (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              href={project.slug ? `${basePath}/${project.slug}` : basePath}
-              compact
-              noImageText={isEnglish ? "No image" : "Sin imagen"}
-            />
-          ))}
-        </div>
+        <ProjectHoverList
+          projects={projectsToShow}
+          basePath={basePath}
+          compact
+          noImageText={isEnglish ? "No image" : "Sin imagen"}
+        />
       </motion.section>
 
       <motion.section
@@ -254,7 +445,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         transition={TRANSITION_SECTION}
       >
         <h3 className="mb-5 text-xl font-medium">
-          {isEnglish ? "Capabilities" : "Capacidades"}
+          Skills
         </h3>
         <div className="flex flex-wrap gap-2.5">
           {SKILLS.map((skill) => (
@@ -296,7 +487,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
                     </span>
                   )}
                 </h4>
-                <span className="shrink-0 text-sm text-zinc-500 dark:text-zinc-300">
+                <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
                   {formatDateMonthYear(job.date, isEnglish)}
                 </span>
               </div>
@@ -327,7 +518,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
                     </span>
                   )}
                 </h4>
-                <span className="shrink-0 text-sm text-zinc-500 dark:text-zinc-300">
+                <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
                   {formatDateMonthYear(item.date, isEnglish)}
                 </span>
               </div>

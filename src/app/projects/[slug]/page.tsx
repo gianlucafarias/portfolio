@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import CaseStudyPage from "@/components/pages/CaseStudyPage";
+import DirectProjectRoute from "@/components/pages/DirectProjectRoute";
 import { getMessages } from "@/lib/i18n";
-import { getAllProjectSlugs, getProjectBySlug } from "@/lib/projects-sheet";
+import { getAllProjectSlugs, getProjectBySlug, getProjectsByLocale } from "@/lib/projects-sheet";
 
 export const dynamic = "force-static";
 
@@ -48,10 +48,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectCaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug("es", slug);
+  const [project, { pinProjects, otherProjects }] = await Promise.all([
+    getProjectBySlug("es", slug),
+    getProjectsByLocale("es"),
+  ]);
   const messages = getMessages("es");
 
   if (!project) notFound();
 
-  return <CaseStudyPage project={project} locale="es" messages={messages} />;
+  return (
+    <DirectProjectRoute
+      project={project}
+      projects={[...pinProjects, ...otherProjects]}
+      pinProjects={pinProjects}
+      locale="es"
+      messages={messages}
+    />
+  );
 }
