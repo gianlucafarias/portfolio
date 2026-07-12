@@ -343,7 +343,7 @@ export default function ProjectHoverList({
                       >
                         {project.title}
                       </h4>
-                      {metaItems.length > 0 && (
+                      {!compact && metaItems.length > 0 && (
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">
                           {metaItems.join(" · ")}
                         </span>
@@ -351,12 +351,19 @@ export default function ProjectHoverList({
                     </div>
 
                     {project.impactHighlight && (
-                      <p className="text-sm font-medium leading-relaxed text-zinc-900 dark:text-zinc-100">
+                      <p
+                        className={cn(
+                          "text-sm leading-relaxed",
+                          compact
+                            ? "text-zinc-600 dark:text-zinc-300"
+                            : "font-medium text-zinc-900 dark:text-zinc-100",
+                        )}
+                      >
                         {project.impactHighlight}
                       </p>
                     )}
 
-                    {summary && (
+                    {!compact && summary && (
                       <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
                         {summary}
                       </p>
