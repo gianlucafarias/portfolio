@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { FocusEvent, PointerEvent, SyntheticEvent } from "react";
+import type { FocusEvent, MouseEvent as ReactMouseEvent, PointerEvent, SyntheticEvent } from "react";
+import type { ElementType } from "react";
 import {
   AnimatePresence,
   motion,
@@ -268,6 +269,8 @@ export default function ProjectHoverList({
       <div className="flex flex-col">
         {projects.map((project, index) => {
           const href = getProjectHref(project, basePath);
+          const canOpenCaseStudy = project.caseStudyEnabled;
+          const ProjectRow = (canOpenCaseStudy ? Link : "div") as ElementType;
           const summary = getSummary(project);
           const metaItems = [project.status, project.type].filter(Boolean);
           const isSelected = Boolean(
@@ -291,10 +294,12 @@ export default function ProjectHoverList({
               }}
               className="contents"
             >
-              <Link
-                href={href}
-                data-project-link="true"
-                onClick={(event) => {
+              <ProjectRow
+                {...(canOpenCaseStudy ? { href } : {})}
+                data-project-link={canOpenCaseStudy ? "true" : undefined}
+                aria-disabled={canOpenCaseStudy ? undefined : true}
+                onClick={(event: ReactMouseEvent<HTMLElement>) => {
+                  if (!canOpenCaseStudy) return;
                   if (window.innerWidth < 1024) {
                     event.preventDefault();
                     window.location.assign(href);
@@ -305,11 +310,12 @@ export default function ProjectHoverList({
                     router.replace(href, { scroll: false });
                   }
                 }}
-                onFocus={(event) => showPreview(index, event.currentTarget)}
-                onPointerEnter={(event) => showPreview(index, event.currentTarget)}
+                onFocus={(event: FocusEvent<HTMLElement>) => showPreview(index, event.currentTarget)}
+                onPointerEnter={(event: PointerEvent<HTMLElement>) => showPreview(index, event.currentTarget)}
                 onPointerMove={handlePointerMove}
                 className={cn(
                   "group -mx-3 block rounded-xl px-3 py-3 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500",
+                  !canOpenCaseStudy && "cursor-default",
                   isActive
                     ? "bg-zinc-100/80 dark:bg-zinc-900/80"
                     : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900/70",
@@ -346,6 +352,11 @@ export default function ProjectHoverList({
                       {!compact && metaItems.length > 0 && (
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">
                           {metaItems.join(" · ")}
+                        </span>
+                      )}
+                      {!canOpenCaseStudy && project.status && (
+                        <span className="text-xs text-orange-500 dark:text-orange-400">
+                          {project.status}
                         </span>
                       )}
                     </div>
@@ -388,15 +399,17 @@ export default function ProjectHoverList({
                       </div>
                     )}
                   </div>
-                  <ArrowUpRight
-                    className={cn(
-                      "mt-1 hidden h-4 w-4 shrink-0 text-zinc-400 transition-all duration-200 sm:block",
-                      isActive && "translate-x-0.5 -translate-y-0.5 text-orange-500",
-                    )}
-                    aria-hidden="true"
-                  />
+                  {canOpenCaseStudy && (
+                    <ArrowUpRight
+                      className={cn(
+                        "mt-1 hidden h-4 w-4 shrink-0 text-zinc-400 transition-all duration-200 sm:block",
+                        isActive && "translate-x-0.5 -translate-y-0.5 text-orange-500",
+                      )}
+                      aria-hidden="true"
+                    />
+                  )}
                 </div>
-              </Link>
+              </ProjectRow>
             </motion.article>
           );
         })}

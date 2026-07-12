@@ -25,6 +25,7 @@ interface CaseStudyLabels {
   currentUsage?: string;
   keyLearnings?: string;
   migrationStrategy?: string;
+  gallery?: string;
 }
 
 interface ProjectsMessages {
@@ -253,6 +254,39 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                     </li>
                   ))}
                 </ol>
+              </motion.section>
+            )}
+
+            {project.gallery && project.gallery.length > 0 && (
+              <motion.section variants={VARIANTS} transition={{ duration: 0.3 }}>
+                <h2 className={sectionTitleClass}>
+                  {labels.gallery || (isEnglish ? "Process gallery" : "Galería del proceso")}
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {project.gallery.map((item, index) => (
+                    <figure
+                      key={`${item.image}-${index}`}
+                      className={cn(index === 0 && project.gallery!.length % 2 === 1 && "col-span-2")}
+                    >
+                      <div className="overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
+                        <Image
+                          src={item.image}
+                          alt={item.caption || `${project.title} — ${isEnglish ? "process image" : "imagen del proceso"} ${index + 1}`}
+                          width={960}
+                          height={720}
+                          className="aspect-[4/3] w-full object-cover"
+                          sizes={isPanel ? "(min-width: 1024px) 20rem" : "(min-width: 640px) 50vw, 100vw"}
+                          unoptimized={/^https?:\/\//.test(item.image)}
+                        />
+                      </div>
+                      {item.caption && (
+                        <figcaption className="mt-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                          {item.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
               </motion.section>
             )}
 

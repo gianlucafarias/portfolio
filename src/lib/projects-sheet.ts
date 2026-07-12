@@ -34,6 +34,8 @@ export interface Project {
   tags?: string[];
   link?: string;
   github?: string;
+  gallery?: Array<{ image: string; caption?: string }>;
+  caseStudyEnabled: boolean;
   caseStudy?: CaseStudy;
 }
 
@@ -99,6 +101,19 @@ const parseTags = (value?: string) => {
     .filter(Boolean);
 };
 
+const isBuildingStatus = (value?: string) => {
+  const normalized = value?.trim().toLowerCase();
+  return normalized === "building now" || normalized === "en construcción";
+};
+
+const isCaseStudyEnabledRow = (row: ProjectRow) => {
+  if (row.case_study_enabled?.trim()) {
+    return parseBoolean(row.case_study_enabled);
+  }
+
+  return !isBuildingStatus(row.status_es) && !isBuildingStatus(row.status_en);
+};
+
 const getLocaleValue = (
   row: ProjectRow,
   base: string,
@@ -140,7 +155,20 @@ const buildProjectFromRow = (
     link: row.link?.trim() || undefined,
     github: row.github?.trim() || undefined,
     tags: parseTags(row.tags),
+    caseStudyEnabled: isCaseStudyEnabledRow(row),
   };
+
+  const galleryImages = parseList(row.gallery_images);
+  const galleryCaptions = parseList(
+    getLocaleValue(row, "gallery_captions", locale),
+  );
+
+  if (galleryImages.length > 0) {
+    project.gallery = galleryImages.map((image, index) => ({
+      image,
+      caption: galleryCaptions[index],
+    }));
+  }
 
   const caseStudy: CaseStudy = {
     role: getLocaleValue(row, "case_role", locale),
@@ -286,7 +314,7 @@ export const getAllProjectSlugs = cache(async () => {
   return rows
     .filter((row) => {
       const published = row.published ? parseBoolean(row.published) : true;
-      return published && row.slug && row.slug.trim();
+      return published && isCaseStudyEnabledRow(row) && row.slug && row.slug.trim();
     })
     .map((row) => row.slug!.trim());
 });
@@ -300,7 +328,7 @@ export const getProjectBySlug = cache(async (
   if (!row) return null;
 
   const published = row.published ? parseBoolean(row.published) : true;
-  if (!published) return null;
+  if (!published || !isCaseStudyEnabledRow(row)) return null;
 
   return buildProjectFromRow(row, locale);
 });
