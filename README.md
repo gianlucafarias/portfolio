@@ -30,6 +30,14 @@ npm install
 
 # Desarrollo
 npm run dev
+
+# Calidad
+npm run lint
+npm run typecheck
+
+# Pruebas de interfaz (primera vez)
+npx playwright install chromium
+npm run test:e2e
 ```
 
 Abrir [http://localhost:3000](http://localhost:3000)

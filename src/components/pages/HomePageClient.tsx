@@ -83,6 +83,7 @@ const TRANSITION_SECTION = {
 
 const MONTH_ABBR_ES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const MONTH_ABBR_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const HOVER_PILLS_QUERY = "(min-width: 1280px) and (hover: hover) and (pointer: fine)";
 
 function formatDateMonthYear(dateStr: string | undefined, isEnglish = false): string | undefined {
   if (!dateStr) return dateStr;
@@ -98,7 +99,7 @@ function formatDateMonthYear(dateStr: string | undefined, isEnglish = false): st
       }
       return part;
     })
-    .join(" - ");
+    .join("–");
 }
 
 interface MagneticSocialLinkProps {
@@ -156,6 +157,7 @@ function getHoverPillPlacements(
 function HoverPillWord({ children, pills }: HoverPillWordProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [supportsHoverPills, setSupportsHoverPills] = useState(false);
   const [placements, setPlacements] = useState<HoverPillPlacement[]>([]);
   const wordRef = useRef<HTMLSpanElement>(null);
 
@@ -178,12 +180,28 @@ function HoverPillWord({ children, pills }: HoverPillWordProps) {
   }, [pills]);
 
   const showPills = useCallback(() => {
+    if (!supportsHoverPills) return;
     const nextPlacements = updatePlacements();
     setIsActive(nextPlacements.length > 0);
-  }, [updatePlacements]);
+  }, [supportsHoverPills, updatePlacements]);
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia(HOVER_PILLS_QUERY);
+    const syncSupport = () => {
+      setSupportsHoverPills(media.matches);
+      if (!media.matches) {
+        setIsActive(false);
+        setPlacements([]);
+      }
+    };
+
+    syncSupport();
+    media.addEventListener("change", syncSupport);
+    return () => media.removeEventListener("change", syncSupport);
   }, []);
 
   useEffect(() => {
@@ -202,21 +220,22 @@ function HoverPillWord({ children, pills }: HoverPillWordProps) {
     <>
       <span
         ref={wordRef}
-        className="inline-block cursor-default text-zinc-800 underline decoration-orange-500/80 decoration-dotted decoration-[1.5px] underline-offset-4 outline-none transition-colors hover:text-zinc-950 focus-visible:text-zinc-950 dark:text-zinc-100 dark:hover:text-white dark:focus-visible:text-white"
-        tabIndex={0}
-        onFocus={showPills}
-        onBlur={() => setIsActive(false)}
-        onPointerEnter={showPills}
-        onPointerMove={() => {
+        data-hover-pill-trigger
+        className="inline-block cursor-default text-zinc-800 underline decoration-accent-decoration/80 decoration-dotted decoration-[1.5px] underline-offset-4 outline-none transition-colors hover:text-zinc-950 focus-visible:text-zinc-950 dark:text-zinc-100 dark:hover:text-zinc-50 dark:focus-visible:text-zinc-50 xl:relative xl:after:absolute xl:after:left-1/2 xl:after:top-1/2 xl:after:h-10 xl:after:w-full xl:after:min-w-10 xl:after:-translate-x-1/2 xl:after:-translate-y-1/2 xl:after:content-['']"
+        tabIndex={supportsHoverPills ? 0 : undefined}
+        onFocus={supportsHoverPills ? showPills : undefined}
+        onBlur={supportsHoverPills ? () => setIsActive(false) : undefined}
+        onPointerEnter={supportsHoverPills ? showPills : undefined}
+        onPointerMove={supportsHoverPills ? () => {
           if (!isActive) showPills();
-        }}
-        onPointerLeave={() => setIsActive(false)}
+        } : undefined}
+        onPointerLeave={supportsHoverPills ? () => setIsActive(false) : undefined}
       >
         {children}
       </span>
       {isMounted &&
         createPortal(
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {isActive && placements.length > 0 && (
               <div className="pointer-events-none fixed inset-0 z-50">
                 {placements.map((pill, index) => (
@@ -224,7 +243,7 @@ function HoverPillWord({ children, pills }: HoverPillWordProps) {
                     key={pill.label}
                     aria-hidden="true"
                     className={cn(
-                      "fixed whitespace-nowrap rounded-full border border-zinc-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-700 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 dark:text-zinc-200",
+                      "fixed whitespace-nowrap rounded-full border border-zinc-200 bg-paper/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-700 shadow-sm backdrop-blur dark:border-zinc-800 dark:text-zinc-200",
                     )}
                     style={{ left: pill.left, top: pill.top }}
                     initial={{
@@ -243,10 +262,14 @@ function HoverPillWord({ children, pills }: HoverPillWordProps) {
                     }}
                     exit={{
                       opacity: 0,
-                      x: pill.originX,
-                      y: pill.originY,
-                      scale: 0.72,
-                      rotate: 0,
+                      x: 0,
+                      y: 4,
+                      scale: 0.96,
+                      rotate: pill.rotate,
+                      transition: {
+                        duration: 0.15,
+                        ease: [0.4, 0, 1, 1],
+                      },
                     }}
                     transition={{
                       delay: index * 0.04,
@@ -309,7 +332,7 @@ function MagneticSocialLink({ children, link }: MagneticSocialLinkProps) {
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
+        className="control-surface group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-transparent px-2.5 py-1 text-sm text-zinc-700 transition-[box-shadow,color,scale] duration-200 hover:text-accent-text active:scale-[0.96] dark:text-zinc-200"
       >
         {children}
         <svg
@@ -358,17 +381,6 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
     { label: "LinkedIn", link: socials.linkedin },
   ];
 
-  const primaryLinks = [
-    {
-      label: sectionsMessages?.downloadCV || (isEnglish ? "Download CV" : "Descargar CV"),
-      href: cvPdfHref,
-      external: true,
-    },
-    { label: "LinkedIn", href: socials.linkedin, external: true },
-    { label: "GitHub", href: socials.github, external: true },
-    { label: isEnglish ? "View projects" : "Ver proyectos", href: "#projects" },
-  ];
-
   return (
     <motion.main
       className="space-y-12"
@@ -382,34 +394,39 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-         <h3 className="mb-5 text-xl font-medium">
+         <h1 className="mb-4 text-2xl font-semibold leading-[1.15] tracking-tight">
           {isEnglish ? "About me" : "Sobre mí"}
-        </h3>
+        </h1>
         <div className="space-y-5">
           <AboutIntro isEnglish={isEnglish} fallback={about} />
-          <div className="flex flex-wrap gap-3">
-            {primaryLinks.map((link) =>
-              link.external ? (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-orange-500 hover:text-orange-500 active:translate-y-px dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-orange-500 hover:text-orange-500 active:translate-y-px dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
-                >
-                  {link.label}
-                </Link>
-              ),
-            )}
-          </div>
+          <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {isEnglish ? "Find me on " : "Encontrame en "}
+            <a
+              href={socials.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-sm text-zinc-700 underline decoration-accent-decoration/70 underline-offset-4 transition-colors hover:text-accent-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui dark:text-zinc-200"
+            >
+              GitHub ↗
+            </a>
+            {", "}
+            <a
+              href={socials.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-sm text-zinc-700 underline decoration-accent-decoration/70 underline-offset-4 transition-colors hover:text-accent-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui dark:text-zinc-200"
+            >
+              LinkedIn ↗
+            </a>
+            {isEnglish ? " or email me at " : " o enviame un correo a "}
+            <a
+              href={`mailto:${email}`}
+              className="rounded-sm text-zinc-700 underline decoration-accent-decoration/70 underline-offset-4 transition-colors hover:text-accent-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui dark:text-zinc-200"
+            >
+              {email}
+            </a>
+            .
+          </p>
         </div>
       </motion.section>
 
@@ -420,12 +437,12 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         transition={TRANSITION_SECTION}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-xl font-medium">
+          <h2 className="text-lg font-medium leading-tight">
             {navMessages?.projects || "Proyectos"}
-          </h3>
+          </h2>
           <Link
             href={basePath}
-            className="text-sm text-zinc-600 underline decoration-orange-500/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+            className="inline-flex min-h-11 items-center text-sm text-zinc-600 underline decoration-accent-decoration/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
           >
             {sectionsMessages?.viewAll || "Ver todos"}
           </Link>
@@ -444,9 +461,9 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-xl font-medium">
+        <h2 className="mb-5 text-lg font-medium leading-tight">
           Skills
-        </h3>
+        </h2>
         <div className="flex flex-wrap gap-2.5">
           {SKILLS.map((skill) => (
             <div
@@ -458,7 +475,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
                 alt={skill.label}
                 width={16}
                 height={16}
-                className="h-4 w-4 opacity-70 brightness-0 transition-all group-hover:opacity-100 dark:brightness-0 dark:invert dark:group-hover:opacity-100"
+                className="h-4 w-4 opacity-70 brightness-0 transition-opacity group-hover:opacity-100 dark:brightness-0 dark:invert dark:group-hover:opacity-100"
               />
               <span>{skill.label}</span>
             </div>
@@ -472,26 +489,26 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-6 text-xl font-medium">
+        <h2 className="mb-6 text-lg font-medium leading-tight">
           {navMessages?.experience || "Experiencia"}
-        </h3>
+        </h2>
         <div className="flex flex-col gap-8">
           {experience.map((job, i) => (
             <div key={`${job.title}-${i}`} className="space-y-1">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
                   {job.title}
                   {job.company && (
                     <span className="text-zinc-500 dark:text-zinc-300">
                       {" "}· {job.company}
                     </span>
                   )}
-                </h4>
+                </h3>
                 <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
                   {formatDateMonthYear(job.date, isEnglish)}
                 </span>
               </div>
-              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+              <p className="text-sm leading-normal text-zinc-600 dark:text-zinc-300">
                 {job.description}
               </p>
             </div>
@@ -503,21 +520,21 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-6 text-xl font-medium">
+        <h2 className="mb-6 text-lg font-medium leading-tight">
           {sectionsMessages?.education || "Educación"}
-        </h3>
+        </h2>
         <div className="flex flex-col gap-8">
           {education.map((item) => (
             <div key={item.title} className="space-y-1">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
                   {item.title}
                   {item.institution && (
                     <span className="text-zinc-500 dark:text-zinc-300">
                       {" "}· {item.institution}
                     </span>
                   )}
-                </h4>
+                </h3>
                 <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
                   {formatDateMonthYear(item.date, isEnglish)}
                 </span>
@@ -533,13 +550,13 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-xl font-medium">
+        <h2 className="mb-5 text-lg font-medium leading-tight">
           {navMessages?.contact || "Contacto"}
-        </h3>
+        </h2>
         <p className="mb-4 text-base text-zinc-600 dark:text-zinc-300">
           {profileMessages?.projectInvitation || "¿Tenés un proyecto en mente? Envíame un"}{" "}
           <a
-            className="underline decoration-orange-500/70 underline-offset-4 dark:text-zinc-200"
+            className="underline decoration-accent-decoration/70 underline-offset-4 dark:text-zinc-200"
             href={`mailto:${email}`}
           >
             {email}
@@ -556,12 +573,12 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
             href={cvPdfHref}
             target="_blank"
             rel="noreferrer"
-            className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-zinc-200/70 px-2.5 py-1 text-sm text-zinc-700 transition-colors duration-200 hover:border-orange-500 hover:text-orange-500 dark:border-zinc-700/60 dark:text-zinc-200 dark:hover:border-orange-400 dark:hover:text-orange-400"
+            className="control-surface group relative inline-flex shrink-0 items-center gap-[1px] rounded-full border border-transparent px-2.5 py-1 text-sm text-zinc-700 transition-[box-shadow,color,scale] duration-200 hover:text-accent-text active:scale-[0.96] dark:text-zinc-200"
           >
             {sectionsMessages?.downloadCV || "Descargar CV"}
           </a>
         </div>
-        <div className="rounded-xl border border-zinc-200/50 p-5 dark:border-zinc-800/50">
+        <div className="form-surface">
           <ContactForm />
         </div>
       </motion.section>

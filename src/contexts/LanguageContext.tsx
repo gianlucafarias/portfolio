@@ -43,7 +43,7 @@ export function LanguageProvider({
     if (nextLocale !== locale) {
       setLocale(nextLocale);
     }
-  }, [pathname]);
+  }, [locale, pathname]);
 
   useEffect(() => {
     // Cargar traducciones

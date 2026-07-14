@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, ReactNode } from "react";
-import { motion, useMotionValue, useSpring, SpringOptions } from "motion/react";
+import { useCallback, useEffect, useRef, ReactNode } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+import { motion, useMotionValue, useReducedMotion, useSpring, SpringOptions } from "motion/react";
 
 const SPRING_CONFIG: SpringOptions = { stiffness: 26.7, damping: 4.1, mass: 0.2 };
 
@@ -22,7 +23,8 @@ export function Magnetic({
   actionArea = "self",
   springOptions = SPRING_CONFIG,
 }: MagneticProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const isHovered = useRef(actionArea === "global");
   const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -31,75 +33,82 @@ export function Magnetic({
   const springX = useSpring(x, springOptions);
   const springY = useSpring(y, springOptions);
 
-  useEffect(() => {
-    const calculateDistance = (e: MouseEvent) => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distanceX = e.clientX - centerX;
-        const distanceY = e.clientY - centerY;
+  const resetPosition = useCallback(() => {
+    x.set(0);
+    y.set(0);
+  }, [x, y]);
 
-        const absoluteDistance = Math.sqrt(
-          distanceX * distanceX + distanceY * distanceY
-        );
+  const calculateDistance = useCallback((clientX: number, clientY: number) => {
+    if (prefersReducedMotion || !isHovered.current || !ref.current) {
+      resetPosition();
+      return;
+    }
 
-        if (isHovered && absoluteDistance <= range) {
-          const scale = 1 - absoluteDistance / range;
-          x.set(distanceX * intensity * scale);
-          y.set(distanceY * intensity * scale);
-        } else {
-          x.set(0);
-          y.set(0);
-        }
-      }
-    };
+    const rect = ref.current.getBoundingClientRect();
+    const distanceX = clientX - (rect.left + rect.width / 2);
+    const distanceY = clientY - (rect.top + rect.height / 2);
+    const absoluteDistance = Math.hypot(distanceX, distanceY);
 
-    document.addEventListener("mousemove", calculateDistance);
-
-    return () => {
-      document.removeEventListener("mousemove", calculateDistance);
-    };
-  }, [ref, isHovered, intensity, range, x, y]);
+    if (absoluteDistance <= range) {
+      const scale = 1 - absoluteDistance / range;
+      x.set(distanceX * intensity * scale);
+      y.set(distanceY * intensity * scale);
+    } else {
+      resetPosition();
+    }
+  }, [intensity, prefersReducedMotion, range, resetPosition, x, y]);
 
   useEffect(() => {
     if (actionArea === "parent" && ref.current?.parentElement) {
       const parent = ref.current.parentElement;
 
-      const handleParentEnter = () => setIsHovered(true);
-      const handleParentLeave = () => setIsHovered(false);
+      const handleParentEnter = () => { isHovered.current = true; };
+      const handleParentLeave = () => {
+        isHovered.current = false;
+        resetPosition();
+      };
+      const handleParentMove = (event: PointerEvent) => calculateDistance(event.clientX, event.clientY);
 
-      parent.addEventListener("mouseenter", handleParentEnter);
-      parent.addEventListener("mouseleave", handleParentLeave);
+      parent.addEventListener("pointerenter", handleParentEnter);
+      parent.addEventListener("pointerleave", handleParentLeave);
+      parent.addEventListener("pointermove", handleParentMove);
 
       return () => {
-        parent.removeEventListener("mouseenter", handleParentEnter);
-        parent.removeEventListener("mouseleave", handleParentLeave);
+        parent.removeEventListener("pointerenter", handleParentEnter);
+        parent.removeEventListener("pointerleave", handleParentLeave);
+        parent.removeEventListener("pointermove", handleParentMove);
       };
     } else if (actionArea === "global") {
-      setIsHovered(true);
+      isHovered.current = true;
+      const handleGlobalMove = (event: PointerEvent) => calculateDistance(event.clientX, event.clientY);
+      document.addEventListener("pointermove", handleGlobalMove);
+      return () => document.removeEventListener("pointermove", handleGlobalMove);
     }
-  }, [actionArea]);
+  }, [actionArea, calculateDistance, resetPosition]);
 
   const handleMouseEnter = () => {
-    if (actionArea === "self") {
-      setIsHovered(true);
+      if (actionArea === "self") {
+      isHovered.current = true;
     }
   };
 
   const handleMouseLeave = () => {
     if (actionArea === "self") {
-      setIsHovered(false);
-      x.set(0);
-      y.set(0);
+      isHovered.current = false;
+      resetPosition();
     }
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (actionArea === "self") calculateDistance(event.clientX, event.clientY);
   };
 
   return (
     <motion.div
       ref={ref}
-      onMouseEnter={actionArea === "self" ? handleMouseEnter : undefined}
-      onMouseLeave={actionArea === "self" ? handleMouseLeave : undefined}
+      onPointerEnter={actionArea === "self" ? handleMouseEnter : undefined}
+      onPointerMove={actionArea === "self" ? handlePointerMove : undefined}
+      onPointerLeave={actionArea === "self" ? handleMouseLeave : undefined}
       style={{
         x: springX,
         y: springY,

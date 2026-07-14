@@ -47,11 +47,11 @@ export default function ContactPageClient({ locale, messages }: ContactPageClien
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-xl font-medium">{contactTitle}</h3>
-        <p className="mb-6 text-base text-zinc-600 dark:text-zinc-300">
+        <h1 className="mb-5 text-2xl font-semibold leading-[1.15] tracking-tight">{contactTitle}</h1>
+        <p className="mb-6 text-base text-pretty text-zinc-600 dark:text-zinc-300">
           {contactDescription}
         </p>
-        <div className="rounded-2xl border border-zinc-200/50 p-6 dark:border-zinc-800/50">
+        <div className="form-surface">
           <ContactForm />
         </div>
       </motion.section>

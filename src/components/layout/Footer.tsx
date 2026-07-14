@@ -18,7 +18,7 @@ const THEMES_OPTIONS: ThemeOption[] = [
   { label: "System", id: "system", icon: <MonitorIcon className="h-4 w-4" /> },
 ];
 
-function ThemeSwitch() {
+function ThemeSwitch({ isEnglish }: { isEnglish: boolean }) {
   const { theme, toggleTheme } = useTheme();
   const currentTheme = theme === "dark" ? "dark" : "light";
 
@@ -28,29 +28,40 @@ function ThemeSwitch() {
   };
 
   return (
-    <AnimatedBackground
-      className="rounded-lg bg-zinc-100 dark:bg-zinc-800"
-      defaultValue={currentTheme}
-      transition={{
-        type: "spring",
-        bounce: 0,
-        duration: 0.2,
-      }}
-      enableHover={false}
-      onValueChange={handleThemeChange}
+    <div
+      role="group"
+      aria-label={isEnglish ? "Theme" : "Tema"}
+      className="inline-flex rounded-xl bg-zinc-50 p-0.5 dark:bg-zinc-900"
     >
-      {THEMES_OPTIONS.filter((t) => t.id !== "system").map((t) => (
-        <button
-          key={t.id}
-          className="inline-flex h-7 w-7 items-center justify-center text-zinc-500 transition-colors duration-100 focus-visible:outline-2 data-[checked=true]:text-zinc-950 dark:text-zinc-400 dark:data-[checked=true]:text-zinc-50"
-          type="button"
-          aria-label={`Cambiar a tema ${t.label}`}
-          data-id={t.id}
-        >
-          {t.icon}
-        </button>
-      ))}
-    </AnimatedBackground>
+      <AnimatedBackground
+        className="rounded-[10px] bg-zinc-100 dark:bg-zinc-800"
+        defaultValue={currentTheme}
+        transition={{
+          type: "spring",
+          bounce: 0,
+          duration: 0.2,
+        }}
+        enableHover={false}
+        onValueChange={handleThemeChange}
+      >
+        {THEMES_OPTIONS.filter((t) => t.id !== "system").map((t) => (
+          <button
+            key={t.id}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-zinc-500 transition-[color,scale] duration-150 ease-out active:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui data-[checked=true]:text-zinc-950 dark:text-zinc-400 dark:data-[checked=true]:text-zinc-50"
+            type="button"
+            aria-label={
+              isEnglish
+                ? `Switch to ${t.label.toLowerCase()} theme`
+                : `Cambiar a tema ${t.id === "light" ? "claro" : "oscuro"}`
+            }
+            aria-pressed={currentTheme === t.id}
+            data-id={t.id}
+          >
+            {t.icon}
+          </button>
+        ))}
+      </AnimatedBackground>
+    </div>
   );
 }
 
@@ -64,14 +75,14 @@ export function Footer() {
           href="https://github.com/gianlucafarias"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-zinc-400 transition-colors hover:text-orange-500 dark:text-zinc-500 dark:hover:text-orange-400"
+          className="inline-flex min-h-11 items-center text-xs text-zinc-500 transition-colors hover:text-accent-text dark:text-zinc-400"
         >
           <span>© 2026 gianluca.dev</span>
           <span className="mx-1 text-zinc-300/70 dark:text-zinc-700">•</span>
           <span>{isEnglish ? "Built with Next.js" : "Hecho con Next.js"}</span>
         </a>
         <div className="text-xs text-zinc-500 dark:text-zinc-500">
-          <ThemeSwitch />
+          <ThemeSwitch isEnglish={isEnglish} />
         </div>
       </div>
     </footer>

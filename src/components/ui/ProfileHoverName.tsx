@@ -10,6 +10,7 @@ import {
   useSpring,
 } from "motion/react";
 import Image from "next/image";
+import { createPortal } from "react-dom";
 
 interface ProfileHoverNameProps {
   children: ReactNode;
@@ -22,21 +23,21 @@ const PROFILE_GAP = 16;
 const PROFILE_MARGIN = 24;
 
 const PREVIEW_ENTER_TRANSITION = {
-  duration: 0.55,
+  duration: 0.24,
   ease: [0.16, 1, 0.3, 1] as const,
-  opacity: { duration: 0.5 },
-  filter: { duration: 0.72, ease: [0.22, 1, 0.36, 1] as const },
-  y: { duration: 0.55 },
-  scale: { duration: 0.55 },
+  opacity: { duration: 0.18 },
+  filter: { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const },
+  y: { duration: 0.24 },
+  scale: { duration: 0.24 },
 };
 
 const PREVIEW_EXIT_TRANSITION = {
-  duration: 0.38,
-  ease: [0.16, 1, 0.3, 1] as const,
-  opacity: { duration: 0.32 },
-  filter: { duration: 0.42 },
-  y: { duration: 0.38 },
-  scale: { duration: 0.38 },
+  duration: 0.15,
+  ease: [0.4, 0, 1, 1] as const,
+  opacity: { duration: 0.12 },
+  filter: { duration: 0.15 },
+  y: { duration: 0.15 },
+  scale: { duration: 0.15 },
 };
 
 export default function ProfileHoverName({
@@ -46,6 +47,7 @@ export default function ProfileHoverName({
 }: ProfileHoverNameProps) {
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLSpanElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const imageX = useMotionValue(0);
   const imageY = useMotionValue(0);
@@ -113,18 +115,32 @@ export default function ProfileHoverName({
   };
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (!isPreviewVisible) {
       return;
     }
 
+    let frame: number | undefined;
+    const startedAt = performance.now();
+    const syncDuringEntrance = (now: number) => {
+      updatePreviewPosition();
+      if (now - startedAt < 400) {
+        frame = window.requestAnimationFrame(syncDuringEntrance);
+      }
+    };
     const handleLayoutChange = () => {
       updatePreviewPosition();
     };
 
+    frame = window.requestAnimationFrame(syncDuringEntrance);
     window.addEventListener("resize", handleLayoutChange);
     window.addEventListener("scroll", handleLayoutChange, true);
 
     return () => {
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", handleLayoutChange);
       window.removeEventListener("scroll", handleLayoutChange, true);
     };
@@ -144,58 +160,63 @@ export default function ProfileHoverName({
         {children}
       </span>
 
-      <motion.div
-        className="pointer-events-none fixed z-20 hidden -translate-y-1/2 xl:block"
-        style={{
-          top: springPreviewTop,
-          left: previewLeft,
-          width: PROFILE_SIZE,
-          height: PROFILE_SIZE,
-        }}
-        aria-hidden="true"
-      >
-        <AnimatePresence>
-          {isPreviewVisible && (
-            <motion.div
-              key="profile-preview"
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, y: 14, scale: 0.97, filter: "blur(16px)" }
-              }
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : {
-                      opacity: 0,
-                      y: 10,
-                      scale: 0.985,
-                      filter: "blur(12px)",
-                      transition: PREVIEW_EXIT_TRANSITION,
-                    }
-              }
-              transition={prefersReducedMotion ? { duration: 0 } : PREVIEW_ENTER_TRANSITION}
-              className="absolute inset-0"
-            >
-              <motion.div
-                className="h-full w-full overflow-hidden rounded-full border border-zinc-200/70 bg-zinc-100 shadow-sm ring-4 ring-white/80 dark:border-zinc-800 dark:bg-zinc-900 dark:ring-zinc-950/80"
-                style={prefersReducedMotion ? undefined : { x: springX, y: springY }}
-              >
-                <Image
-                  src={imageSrc}
-                  alt={imageAlt}
-                  width={PROFILE_SIZE}
-                  height={PROFILE_SIZE}
-                  className="h-full w-full object-cover"
-                  sizes={`${PROFILE_SIZE}px`}
-                  priority
-                />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      {isMounted &&
+        createPortal(
+          <motion.div
+            data-profile-hover-preview
+            className="pointer-events-none fixed z-20 hidden -translate-y-1/2 xl:block"
+            style={{
+              top: springPreviewTop,
+              left: previewLeft,
+              width: PROFILE_SIZE,
+              height: PROFILE_SIZE,
+            }}
+            aria-hidden="true"
+          >
+            <AnimatePresence initial={false}>
+              {isPreviewVisible && (
+                <motion.div
+                  key="profile-preview"
+                  initial={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 8, scale: 0.985, filter: "blur(4px)" }
+                  }
+                  animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                  exit={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : {
+                          opacity: 0,
+                          y: 6,
+                          scale: 0.99,
+                          filter: "blur(4px)",
+                          transition: PREVIEW_EXIT_TRANSITION,
+                        }
+                  }
+                  transition={prefersReducedMotion ? { duration: 0 } : PREVIEW_ENTER_TRANSITION}
+                  className="absolute inset-0"
+                >
+                  <motion.div
+                    className="h-full w-full overflow-hidden rounded-full bg-zinc-100 shadow-sm ring-4 ring-paper/80 dark:bg-zinc-900"
+                    style={prefersReducedMotion ? undefined : { x: springX, y: springY }}
+                  >
+                    <Image
+                      src={imageSrc}
+                      alt={imageAlt}
+                      width={PROFILE_SIZE}
+                      height={PROFILE_SIZE}
+                      className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
+                      sizes={`${PROFILE_SIZE}px`}
+                      priority
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>,
+          document.body,
+        )}
     </>
   );
 }

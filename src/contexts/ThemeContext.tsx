@@ -18,15 +18,27 @@ interface ThemeProviderProps {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof document === 'undefined') return 'light';
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  });
 
   useEffect(() => {
-    // Cargar tema desde localStorage al inicializar
     const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const syncTheme = () => {
+      const nextTheme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : mediaQuery.matches
+          ? 'dark'
+          : 'light';
+      setTheme(nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+    };
+
+    syncTheme();
+    if (!savedTheme) mediaQuery.addEventListener('change', syncTheme);
+    return () => mediaQuery.removeEventListener('change', syncTheme);
   }, []);
 
   const toggleTheme = () => {

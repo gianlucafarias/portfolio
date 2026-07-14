@@ -16,7 +16,7 @@ export default function RotatingRoleTag({
   tags,
   intervalMs = 3800,
   initialDelay = 0.5,
-  className = "text-sm text-zinc-400 dark:text-zinc-500",
+  className = "text-sm text-zinc-500 dark:text-zinc-400",
 }: RotatingRoleTagProps) {
   const prefersReducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -59,7 +59,7 @@ export default function RotatingRoleTag({
           exit={{
             opacity: 0,
             y: 4,
-            transition: { duration: 0.32, ease: EASE },
+            transition: { duration: 0.16, ease: [0.4, 0, 1, 1] },
           }}
           transition={{
             duration: 0.4,

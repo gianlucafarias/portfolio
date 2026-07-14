@@ -27,7 +27,7 @@ interface ProjectHoverListProps {
 const getSummary = (project: Project) =>
   project.recruiterSummary ||
   project.shortDescription ||
-  (project.description ? `${project.description.slice(0, 120)}...` : undefined);
+  project.description;
 
 const getProjectHref = (project: Project, basePath: string) =>
   project.slug ? `${basePath}/${project.slug}` : basePath;
@@ -56,21 +56,21 @@ function getPreviewSize(naturalWidth: number, naturalHeight: number) {
 }
 
 const PREVIEW_ENTER_TRANSITION = {
-  duration: 0.55,
+  duration: 0.24,
   ease: [0.16, 1, 0.3, 1] as const,
-  opacity: { duration: 0.5 },
-  filter: { duration: 0.72, ease: [0.22, 1, 0.36, 1] as const },
-  y: { duration: 0.55 },
-  scale: { duration: 0.55 },
+  opacity: { duration: 0.18 },
+  filter: { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const },
+  y: { duration: 0.24 },
+  scale: { duration: 0.24 },
 };
 
 const PREVIEW_EXIT_TRANSITION = {
-  duration: 0.38,
-  ease: [0.16, 1, 0.3, 1] as const,
-  opacity: { duration: 0.32 },
-  filter: { duration: 0.42 },
-  y: { duration: 0.38 },
-  scale: { duration: 0.38 },
+  duration: 0.15,
+  ease: [0.4, 0, 1, 1] as const,
+  opacity: { duration: 0.12 },
+  filter: { duration: 0.15 },
+  y: { duration: 0.15 },
+  scale: { duration: 0.15 },
 };
 
 export default function ProjectHoverList({
@@ -140,7 +140,7 @@ export default function ProjectHoverList({
     previewLeft.set(Math.max(PREVIEW_MARGIN, left));
   }, [previewLeft]);
 
-  const updatePreviewTop = (element: HTMLElement) => {
+  const updatePreviewTop = useCallback((element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
     const target = rect.top + rect.height / 2;
     const { height } = previewSizeRef.current;
@@ -148,7 +148,7 @@ export default function ProjectHoverList({
     const max = window.innerHeight - PREVIEW_MARGIN - height / 2;
 
     previewTop.set(Math.min(Math.max(target, min), max));
-  };
+  }, [previewTop]);
 
   const handlePreviewImageLoad = useCallback(
     (event: SyntheticEvent<HTMLImageElement>) => {
@@ -235,25 +235,31 @@ export default function ProjectHoverList({
     }
 
     updatePreviewLeft();
-  }, [isPreviewVisible, previewSize, updatePreviewLeft]);
+  }, [isPreviewVisible, previewSize, updatePreviewLeft, updatePreviewTop]);
 
   useEffect(() => {
     if (!isPreviewVisible) {
       return;
     }
 
+    let frame: number | undefined;
     const handleLayoutChange = () => {
-      updatePreviewLeft();
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        if (activeItemRef.current) updatePreviewTop(activeItemRef.current);
+        updatePreviewLeft();
+      });
     };
 
     window.addEventListener("resize", handleLayoutChange);
     window.addEventListener("scroll", handleLayoutChange, true);
 
     return () => {
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", handleLayoutChange);
       window.removeEventListener("scroll", handleLayoutChange, true);
     };
-  }, [isPreviewVisible, updatePreviewLeft]);
+  }, [isPreviewVisible, updatePreviewLeft, updatePreviewTop]);
 
   if (projects.length === 0) {
     return null;
@@ -314,21 +320,21 @@ export default function ProjectHoverList({
                 onPointerEnter={(event: PointerEvent<HTMLElement>) => showPreview(index, event.currentTarget)}
                 onPointerMove={handlePointerMove}
                 className={cn(
-                  "group -mx-3 block rounded-xl px-3 py-3 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500",
+                  "group -mx-3 block rounded-[20px] px-3 py-3 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui",
                   !canOpenCaseStudy && "cursor-default",
                   isActive
                     ? "bg-zinc-100/80 dark:bg-zinc-900/80"
                     : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900/70",
                 )}
               >
-                <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200/70 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 md:hidden">
+                <div className="mb-3 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900 xl:hidden">
                   {project.image ? (
                     <Image
                       src={project.image}
-                      alt={project.title}
+                      alt=""
                       width={640}
                       height={420}
-                      className="aspect-video w-full object-cover object-top"
+                      className="aspect-video w-full object-cover object-top outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
                       sizes="100vw"
                     />
                   ) : (
@@ -343,8 +349,8 @@ export default function ProjectHoverList({
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <h4
                         className={cn(
-                          "text-base font-semibold text-zinc-900 transition-colors group-hover:text-orange-500 dark:text-zinc-50",
-                          isSelected && "text-orange-500 dark:text-orange-400",
+                          "text-base font-semibold text-zinc-900 transition-colors group-hover:text-accent-text dark:text-zinc-50",
+                          isSelected && "text-accent-text",
                         )}
                       >
                         {project.title}
@@ -355,7 +361,7 @@ export default function ProjectHoverList({
                         </span>
                       )}
                       {!canOpenCaseStudy && project.status && (
-                        <span className="text-xs text-orange-500 dark:text-orange-400">
+                        <span className="text-xs text-accent-text">
                           {project.status}
                         </span>
                       )}
@@ -364,7 +370,7 @@ export default function ProjectHoverList({
                     {project.impactHighlight && (
                       <p
                         className={cn(
-                          "text-sm leading-relaxed",
+                          "text-pretty text-sm leading-normal",
                           compact
                             ? "text-zinc-600 dark:text-zinc-300"
                             : "font-medium text-zinc-900 dark:text-zinc-100",
@@ -375,13 +381,18 @@ export default function ProjectHoverList({
                     )}
 
                     {!compact && summary && (
-                      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                      <p
+                        className={cn(
+                          "text-pretty text-sm leading-normal text-zinc-600 dark:text-zinc-300",
+                          canOpenCaseStudy && "line-clamp-2",
+                        )}
+                      >
                         {summary}
                       </p>
                     )}
 
                     {!compact && project.proof && (
-                      <p className="border-l border-orange-500/70 pl-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                      <p className="border-l border-accent-decoration/70 pl-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                         {project.proof}
                       </p>
                     )}
@@ -402,8 +413,8 @@ export default function ProjectHoverList({
                   {canOpenCaseStudy && (
                     <ArrowUpRight
                       className={cn(
-                        "mt-1 hidden h-4 w-4 shrink-0 text-zinc-400 transition-all duration-200 sm:block",
-                        isActive && "translate-x-0.5 -translate-y-0.5 text-orange-500",
+                        "mt-1 hidden h-4 w-4 shrink-0 text-zinc-400 transition-[color,transform] duration-200 sm:block",
+                        isActive && "translate-x-0.5 -translate-y-0.5 text-accent-ui",
                       )}
                       aria-hidden="true"
                     />
@@ -417,22 +428,23 @@ export default function ProjectHoverList({
 
       <motion.div
         data-project-hover-preview
-        className="pointer-events-none fixed z-20 hidden -translate-y-1/2 xl:block"
+        className="pointer-events-none fixed left-0 top-0 z-20 hidden xl:block"
         style={{
-          top: springPreviewTop,
-          left: previewLeft,
+          x: previewLeft,
+          y: springPreviewTop,
           width: previewSize.width,
         }}
       >
-        <div className="relative" style={{ height: previewSize.height }}>
-          <AnimatePresence mode="wait">
+        <div className="-translate-y-1/2">
+          <div className="relative" style={{ height: previewSize.height }}>
+          <AnimatePresence mode="sync" initial={false}>
             {isPreviewVisible && activeProject && (
               <motion.div
                 key={activeProject.slug || activeProject.title}
                 initial={
                   prefersReducedMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, y: 14, scale: 0.97, filter: "blur(16px)" }
+                    : { opacity: 0, y: 8, scale: 0.985, filter: "blur(4px)" }
                 }
                 animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 exit={
@@ -440,9 +452,9 @@ export default function ProjectHoverList({
                     ? { opacity: 0 }
                     : {
                         opacity: 0,
-                        y: 10,
-                        scale: 0.985,
-                        filter: "blur(12px)",
+                        y: 6,
+                        scale: 0.99,
+                        filter: "blur(4px)",
                         transition: PREVIEW_EXIT_TRANSITION,
                       }
                 }
@@ -450,7 +462,7 @@ export default function ProjectHoverList({
                 className="absolute inset-0"
               >
                 <motion.div
-                  className="overflow-hidden rounded-xl border border-zinc-200/70 bg-zinc-100 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+                  className="overflow-hidden rounded-xl bg-zinc-100 shadow-sm dark:bg-zinc-900"
                   style={prefersReducedMotion ? undefined : { x: springX, y: springY }}
                 >
                   <div
@@ -463,7 +475,7 @@ export default function ProjectHoverList({
                         alt={activeProject.title}
                         width={previewSize.width}
                         height={previewSize.height}
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-contain outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
                         sizes={`${PREVIEW_MAX_WIDTH}px`}
                         onLoad={handlePreviewImageLoad}
                         priority={activeIndex === firstPreviewIndex}
@@ -479,6 +491,7 @@ export default function ProjectHoverList({
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </motion.div>
     </div>

@@ -58,12 +58,12 @@ export default function ProjectsPageClient({ locale, messages, pinProjects, othe
         transition={TRANSITION_SECTION}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-xl font-medium">
+          <h1 className="text-2xl font-semibold leading-[1.15] tracking-tight">
             {isEnglish ? "All Projects" : "Todos los proyectos"}
-          </h3>
+          </h1>
           <Link
             href={isEnglish ? "/en" : "/"}
-            className="text-sm text-zinc-600 underline decoration-orange-500/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+            className="inline-flex min-h-11 items-center text-sm text-zinc-600 underline decoration-accent-decoration/70 underline-offset-4 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
           >
             ← {isEnglish ? "Home" : "Inicio"}
           </Link>

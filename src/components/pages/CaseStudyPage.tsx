@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
+import type { Ref } from "react";
 import type { Locale, Messages } from "@/lib/i18n";
 import type { Project } from "@/lib/projects-sheet";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ interface CaseStudyPageProps {
   locale: Locale;
   messages: Messages;
   layout?: "page" | "panel";
+  titleRef?: Ref<HTMLHeadingElement>;
 }
 
 interface CtaLinksProps {
@@ -50,7 +52,13 @@ const VARIANTS = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function CaseStudyPage({ project, locale, messages, layout = "page" }: CaseStudyPageProps) {
+export default function CaseStudyPage({
+  project,
+  locale,
+  messages,
+  layout = "page",
+  titleRef,
+}: CaseStudyPageProps) {
   const isEnglish = locale === "en";
   const projectsMessages = messages?.projects as ProjectsMessages | undefined;
   const labels = projectsMessages?.caseStudy || {};
@@ -77,7 +85,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
     "mb-3 font-medium text-zinc-900 dark:text-zinc-50",
     isPanel
       ? "text-xs uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400"
-      : "text-xl",
+      : "text-lg leading-tight",
   );
 
   const CtaLinks = ({ project, labels, layout }: CtaLinksProps) => {
@@ -91,10 +99,10 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "text-sm font-medium transition-colors",
+            "inline-flex min-h-11 items-center text-sm font-medium transition-[background-color,border-color,color,scale] duration-150 active:scale-[0.96]",
             isPanelLayout
-              ? "text-zinc-600 underline decoration-zinc-300 underline-offset-4 hover:text-orange-500 dark:text-zinc-300 dark:decoration-zinc-700 dark:hover:text-orange-400"
-              : "rounded-xl bg-zinc-900 px-5 py-2.5 text-center text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200",
+              ? "text-zinc-600 underline decoration-zinc-300 underline-offset-4 hover:text-accent-text dark:text-zinc-300 dark:decoration-zinc-700"
+              : "rounded-xl bg-zinc-900 px-5 py-2.5 text-center text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200",
           )}
         >
           {labels.viewProject || "Ver Proyecto"}{isPanelLayout && " ↗"}
@@ -106,10 +114,10 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "flex items-center gap-2 text-sm font-medium transition-colors",
+            "flex min-h-11 items-center gap-2 text-sm font-medium transition-[background-color,border-color,color,scale] duration-150 active:scale-[0.96]",
             isPanelLayout
-              ? "text-zinc-600 underline decoration-zinc-300 underline-offset-4 hover:text-orange-500 dark:text-zinc-300 dark:decoration-zinc-700 dark:hover:text-orange-400"
-              : "justify-center rounded-xl border border-zinc-200 px-5 py-2.5 text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800/50",
+              ? "text-zinc-600 underline decoration-zinc-300 underline-offset-4 hover:text-accent-text dark:text-zinc-300 dark:decoration-zinc-700"
+              : "control-surface justify-center rounded-xl border border-transparent px-5 py-2.5 text-zinc-700 transition-[box-shadow,background-color,color,scale] hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50",
           )}
         >
           {!isPanelLayout && <svg
@@ -139,7 +147,11 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
     >
       <div className={cn("space-y-6", layout === "page" && "lg:sticky lg:top-24")}>
         <motion.header className="space-y-2" variants={VARIANTS} transition={{ duration: 0.3 }}>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+          <h1
+            ref={titleRef}
+            tabIndex={titleRef ? -1 : undefined}
+            className="text-2xl font-semibold leading-[1.15] tracking-tight text-zinc-900 outline-none dark:text-zinc-50"
+          >
             {project.title}
           </h1>
           {metadataItems.length > 0 && (
@@ -150,7 +162,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
         </motion.header>
         {project.image && !isPanel && (
           <motion.figure
-            className="overflow-hidden rounded-2xl ring-1 ring-zinc-200/50 dark:ring-zinc-800/50"
+            className="overflow-hidden rounded-2xl"
             variants={VARIANTS}
             transition={{ duration: 0.3 }}
           >
@@ -159,7 +171,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
               alt={project.title}
               width={640}
               height={360}
-              className="aspect-video w-full object-cover"
+              className="aspect-video w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
@@ -181,8 +193,8 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <dt className={cn("text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400", isPanel && "sr-only")}>
                   {item.label}
                 </dt>
-                {isPanel && <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />}
-                <dd className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                {isPanel && <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-ui" aria-hidden="true" />}
+                <dd className="text-sm leading-normal text-zinc-800 dark:text-zinc-200">
                   {item.value}
                 </dd>
               </div>
@@ -192,7 +204,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
         {layout === "page" && (
           <Link
             href={base}
-            className="inline-flex text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="inline-flex min-h-11 items-center text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
             {labels.backToProjects || "← Volver a proyectos"}
           </Link>
@@ -204,7 +216,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
           <h2 className={sectionTitleClass}>
             {labels.overview || "Overview"}
           </h2>
-          <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="leading-normal text-zinc-600 dark:text-zinc-400">
             {project.recruiterSummary || project.description}
           </p>
         </motion.section>
@@ -216,7 +228,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.challenge}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                <p className="leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.challenge}
                 </p>
               </motion.section>
@@ -227,7 +239,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.solution}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                <p className="leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.solution}
                 </p>
               </motion.section>
@@ -250,7 +262,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                       )}>
                         {i + 1}
                       </span>
-                      <span className="leading-relaxed">{step}</span>
+                      <span className="leading-normal">{step}</span>
                     </li>
                   ))}
                 </ol>
@@ -262,11 +274,11 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.gallery || (isEnglish ? "Process gallery" : "Galería del proceso")}
                 </h2>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {project.gallery.map((item, index) => (
                     <figure
                       key={`${item.image}-${index}`}
-                      className={cn(index === 0 && project.gallery!.length % 2 === 1 && "col-span-2")}
+                      className={cn(index === 0 && project.gallery!.length % 2 === 1 && "sm:col-span-2")}
                     >
                       <div className="overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
                         <Image
@@ -274,7 +286,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                           alt={item.caption || `${project.title} — ${isEnglish ? "process image" : "imagen del proceso"} ${index + 1}`}
                           width={960}
                           height={720}
-                          className="aspect-[4/3] w-full object-cover"
+                          className="aspect-[4/3] w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
                           sizes={isPanel ? "(min-width: 1024px) 20rem" : "(min-width: 640px) 50vw, 100vw"}
                           unoptimized={/^https?:\/\//.test(item.image)}
                         />
@@ -295,7 +307,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.results}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                <p className="leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.results}
                 </p>
               </motion.section>
@@ -306,7 +318,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.myRole}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                <p className="leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.myRole}
                 </p>
               </motion.section>
@@ -317,7 +329,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.technicalArchitecture}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                <p className="break-words whitespace-pre-line leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.technicalArchitecture}
                 </p>
               </motion.section>
@@ -340,7 +352,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                       )}>
                         {i + 1}
                       </span>
-                      <span className="leading-relaxed">{step}</span>
+                      <span className="leading-normal">{step}</span>
                     </li>
                   ))}
                 </ol>
@@ -352,7 +364,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.impact}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                <p className="break-words whitespace-pre-line leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.impact}
                 </p>
               </motion.section>
@@ -363,7 +375,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.majorChallenge}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
+                <p className="leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.majorChallenge}
                 </p>
               </motion.section>
@@ -374,7 +386,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                 <h2 className={sectionTitleClass}>
                   {labels.currentUsage}
                 </h2>
-                <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                <p className="break-words whitespace-pre-line leading-normal text-zinc-600 dark:text-zinc-400">
                   {project.caseStudy.currentUsage}
                 </p>
               </motion.section>
@@ -392,7 +404,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
                       className="flex gap-3 text-zinc-600 dark:text-zinc-400"
                     >
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
-                      <span className="leading-relaxed">{item}</span>
+                      <span className="leading-normal">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -407,7 +419,7 @@ export default function CaseStudyPage({ project, locale, messages, layout = "pag
               {labels.technologies}
             </h2>
             {isPanel ? (
-              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm leading-normal text-zinc-600 dark:text-zinc-400">
                 {project.tags.join(" · ")}
               </p>
             ) : (

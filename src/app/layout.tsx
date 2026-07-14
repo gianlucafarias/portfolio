@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -9,15 +9,11 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/next";
+import MotionProvider from "@/components/layout/MotionProvider";
 import PortfolioShell from "@/components/layout/PortfolioShell";
 
 const geist = Geist({
   variable: "--font-geist",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -105,13 +101,13 @@ export default async function RootLayout({ children, project }: RootLayoutProps)
       lang={locale}
       data-theme="light"
       data-scroll-behavior="smooth"
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={geist.variable}
       suppressHydrationWarning
     >
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();`,
+            __html: `(function(){var t=localStorage.getItem('theme');var r=t==='light'||t==='dark'?t:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',r);})();`,
           }}
         />
         <script
@@ -120,18 +116,20 @@ export default async function RootLayout({ children, project }: RootLayoutProps)
         />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="font-sans bg-white antialiased dark:bg-zinc-950">
+      <body className="bg-canvas font-sans text-zinc-900 antialiased dark:text-zinc-50">
         <ThemeProvider>
-          <LanguageProvider initialLocale={locale} initialMessages={messages}>
-            <div className="flex min-h-screen w-full flex-col">
-              <PortfolioShell project={project}>
-                <Header />
-                {children}
-                <Analytics/>
-                <Footer />
-              </PortfolioShell>
-            </div>
-          </LanguageProvider>
+          <MotionProvider>
+            <LanguageProvider initialLocale={locale} initialMessages={messages}>
+              <div className="flex min-h-screen w-full flex-col">
+                <PortfolioShell project={project}>
+                  <Header />
+                  {children}
+                  <Analytics/>
+                  <Footer />
+                </PortfolioShell>
+              </div>
+            </LanguageProvider>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

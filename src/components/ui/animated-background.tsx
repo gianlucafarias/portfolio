@@ -7,6 +7,7 @@ import { Children, cloneElement, useEffect, useState, useId, ReactElement } from
 interface ChildProps {
   "data-id"?: string;
   "data-checked"?: string;
+  "aria-pressed"?: boolean;
   className?: string;
   children?: React.ReactNode;
   onClick?: () => void;
@@ -67,6 +68,7 @@ export function AnimatedBackground({
         key: index,
         className: cn("relative inline-flex", childProps.className),
         "data-checked": activeId === id ? "true" : "false",
+        "aria-pressed": activeId === id,
         ...interactionProps,
       },
       <>

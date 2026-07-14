@@ -340,7 +340,7 @@
       "send": "Send"
     },
     "messages": {
-      "sending": "Sending...",
+      "sending": "Sending…",
       "error": "Error sending message",
       "success": "Message sent successfully"
     }

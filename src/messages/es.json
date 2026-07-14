@@ -325,7 +325,7 @@
       "send": "Enviar"
     },
     "messages": {
-      "sending": "Enviando...",
+      "sending": "Enviando…",
       "error": "Error al enviar el mensaje",
       "success": "Mensaje enviado correctamente"
     }

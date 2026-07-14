@@ -32,20 +32,23 @@ export default function DirectProjectRoute({
     return () => mediaQuery.removeEventListener("change", update);
   }, []);
 
-  if (!isDesktop) {
-    return <CaseStudyPage project={project} locale={locale} messages={messages} />;
-  }
-
   return (
     <>
-      <HomePageClient locale={locale} messages={messages} pinProjects={pinProjects} />
-      <ProjectSidePanel
-        project={project}
-        projects={projects}
-        locale={locale}
-        messages={messages}
-        closeHref={locale === "en" ? "/en" : "/"}
-      />
+      <div className="lg:hidden">
+        <CaseStudyPage project={project} locale={locale} messages={messages} />
+      </div>
+      <div className="hidden lg:block">
+        <HomePageClient locale={locale} messages={messages} pinProjects={pinProjects} />
+      </div>
+      {isDesktop && (
+        <ProjectSidePanel
+          project={project}
+          projects={projects}
+          locale={locale}
+          messages={messages}
+          closeHref={locale === "en" ? "/en" : "/"}
+        />
+      )}
     </>
   );
 }

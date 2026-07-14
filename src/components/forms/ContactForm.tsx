@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useId, useState, FormEvent, ChangeEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FormData {
@@ -29,6 +29,7 @@ interface ContactMessages {
 }
 
 export default function ContactForm() {
+  const formId = useId();
   const { messages } = useLanguage();
   const contactMessages = messages?.contact as ContactMessages | undefined;
   
@@ -138,11 +139,12 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
+        <label htmlFor={`${formId}-name`} className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
           {contactMessages?.form?.name || "Nombre"}
         </label>
         <input
-          className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-400 dark:focus:ring-orange-400"
+          id={`${formId}-name`}
+          className="w-full rounded-xl border border-zinc-200 bg-paper px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-accent-ui focus:outline-none focus:ring-1 focus:ring-accent-ui dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-400"
           type="text"
           name="name"
           value={formData.name}
@@ -154,11 +156,12 @@ export default function ContactForm() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
+        <label htmlFor={`${formId}-email`} className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
           {contactMessages?.form?.email || "Email"}
         </label>
         <input
-          className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-400 dark:focus:ring-orange-400"
+          id={`${formId}-email`}
+          className="w-full rounded-xl border border-zinc-200 bg-paper px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-accent-ui focus:outline-none focus:ring-1 focus:ring-accent-ui dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-400"
           type="email"
           name="email"
           value={formData.email}
@@ -171,11 +174,12 @@ export default function ContactForm() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
+        <label htmlFor={`${formId}-message`} className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
           {contactMessages?.form?.message || "Mensaje"}
         </label>
         <textarea
-          className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-400 dark:focus:ring-orange-400"
+          id={`${formId}-message`}
+          className="w-full rounded-xl border border-zinc-200 bg-paper px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-accent-ui focus:outline-none focus:ring-1 focus:ring-accent-ui dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-400"
           name="message"
           value={formData.message}
           onChange={handleChange}
@@ -183,7 +187,7 @@ export default function ContactForm() {
           minLength={10}
           maxLength={1000}
           rows={4}
-          placeholder={contactMessages?.form?.message || "Tu mensaje..."}
+          placeholder={contactMessages?.form?.message || "Tu mensaje…"}
         />
       </div>
       <div className="hidden" aria-hidden="true">
@@ -201,10 +205,10 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 dark:focus-visible:outline-orange-400"
+        className="rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-zinc-50 transition-[background-color,scale] duration-150 hover:bg-zinc-800 active:not-disabled:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ui disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
       >
         {isSubmitting
-          ? contactMessages?.messages?.sending || "Enviando..."
+          ? contactMessages?.messages?.sending || "Enviando…"
           : contactMessages?.form?.send || "Enviar"}
       </button>
       {submitStatus && (
