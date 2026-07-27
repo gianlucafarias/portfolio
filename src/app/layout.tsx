@@ -67,8 +67,15 @@ export async function generateMetadata(): Promise<Metadata> {
       description: seo?.description,
       images: [ogImageUrl],
     },
+    manifest: "/site.webmanifest",
     icons: {
-      icon: [{ url: "/favicon.ico" }],
+      icon: [
+        { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+        { url: "/favicon.ico", sizes: "48x48" },
+      ],
+      apple: [
+        { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
     },
   };
 }
@@ -107,14 +114,13 @@ export default async function RootLayout({ children, project }: RootLayoutProps)
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');var r=t==='light'||t==='dark'?t:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',r);})();`,
+            __html: `(function(){var t=localStorage.getItem('theme');var r=t==='light'||t==='dark'?t:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',r);var f=document.querySelector('link[data-theme-favicon]');if(!f){f=document.createElement('link');f.setAttribute('rel','icon');f.setAttribute('type','image/svg+xml');f.setAttribute('data-theme-favicon','');document.head.appendChild(f);}f.setAttribute('href','/favicon-'+r+'.svg');})();`,
           }}
         />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="bg-canvas font-sans text-zinc-900 antialiased dark:text-zinc-50">
         <ThemeProvider>

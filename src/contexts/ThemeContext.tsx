@@ -17,6 +17,13 @@ interface ThemeProviderProps {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document
+    .querySelectorAll<HTMLLinkElement>('link[data-theme-favicon]')
+    .forEach((favicon) => favicon.setAttribute('href', `/favicon-${theme}.svg`));
+}
+
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof document === 'undefined') return 'light';
@@ -33,7 +40,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
           ? 'dark'
           : 'light';
       setTheme(nextTheme);
-      document.documentElement.setAttribute('data-theme', nextTheme);
+      applyTheme(nextTheme);
     };
 
     syncTheme();
@@ -45,7 +52,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const newTheme: Theme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    applyTheme(newTheme);
   };
 
   const value: ThemeContextValue = {

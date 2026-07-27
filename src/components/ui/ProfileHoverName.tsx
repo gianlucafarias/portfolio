@@ -42,7 +42,7 @@ const PREVIEW_EXIT_TRANSITION = {
 
 export default function ProfileHoverName({
   children,
-  imageSrc = "/profile.png",
+  imageSrc = "/profile.jpg",
   imageAlt,
 }: ProfileHoverNameProps) {
   const prefersReducedMotion = useReducedMotion();
