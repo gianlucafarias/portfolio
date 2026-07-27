@@ -19,7 +19,7 @@ const geist = Geist({
 
 const SITE_NAME = "Gianluca Palmier";
 const DEFAULT_SITE_URL = "https://gianluca.dev";
-const DEFAULT_OG_IMAGE = "/portfolio-thumbnail.png";
+const DEFAULT_OG_IMAGE = "/profile.jpg";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -55,8 +55,8 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: ogImageUrl,
-          width: 1200,
-          height: 630,
+          width: 919,
+          height: 919,
           alt: seo?.title || SITE_NAME,
         },
       ],

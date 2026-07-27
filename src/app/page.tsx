@@ -9,6 +9,13 @@ const seo = messages?.seo as {
   description?: string;
   keywords?: string;
 } | undefined;
+const socialImage = {
+  url: "/profile.jpg",
+  width: 919,
+  height: 919,
+  alt: "Gianluca Palmier",
+};
+
 export const metadata: Metadata = {
   title: seo?.title || "Portfolio",
   description: seo?.description,
@@ -26,11 +33,13 @@ export const metadata: Metadata = {
     siteName: "Gianluca Palmier",
     locale: "es_AR",
     type: "website",
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: seo?.title || "Portfolio",
     description: seo?.description,
+    images: [socialImage.url],
   },
 };
 
