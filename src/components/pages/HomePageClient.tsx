@@ -394,7 +394,7 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-         <h1 className="mb-4 text-2xl font-semibold leading-[1.15] tracking-tight">
+         <h1 className="mb-4 text-lg font-medium leading-tight">
           {isEnglish ? "About me" : "Sobre mí"}
         </h1>
         <div className="space-y-5">
@@ -493,26 +493,38 @@ export default function HomePageClient({ locale, messages, pinProjects }: HomePa
           {navMessages?.experience || "Experiencia"}
         </h2>
         <div className="flex flex-col gap-8">
-          {experience.map((job, i) => (
-            <div key={`${job.title}-${i}`} className="space-y-1">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
-                  {job.title}
-                  {job.company && (
-                    <span className="text-zinc-500 dark:text-zinc-300">
-                      {" "}· {job.company}
-                    </span>
-                  )}
-                </h3>
-                <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
-                  {formatDateMonthYear(job.date, isEnglish)}
-                </span>
+          {experience.map((job, i) => {
+            const description = job.description ?? "";
+
+            return (
+              <div key={`${job.title}-${i}`} className="space-y-1">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                  <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                    {job.title}
+                    {job.company && (
+                      <span className="text-zinc-500 dark:text-zinc-300">
+                        {" "}· {job.company}
+                      </span>
+                    )}
+                  </h3>
+                  <span className="shrink-0 text-sm tabular-nums text-zinc-500 dark:text-zinc-300">
+                    {formatDateMonthYear(job.date, isEnglish)}
+                  </span>
+                </div>
+                {description.includes("\n") ? (
+                  <ul className="list-disc space-y-1 pl-5 text-sm leading-normal text-zinc-600 dark:text-zinc-300">
+                    {description.split("\n").map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm leading-normal text-zinc-600 dark:text-zinc-300">
+                    {description}
+                  </p>
+                )}
               </div>
-              <p className="text-sm leading-normal text-zinc-600 dark:text-zinc-300">
-                {job.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </motion.section>
 

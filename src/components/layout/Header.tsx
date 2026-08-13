@@ -65,7 +65,7 @@ export function Header() {
         <motion.div variants={HEADER_ITEM_VARIANTS} transition={{ duration: 0.25 }}>
           <Link
             href={isEnglish ? "/en" : "/"}
-            className="relative inline-flex min-h-11 items-center font-display text-xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50"
+            className="relative inline-flex min-h-11 items-center font-display text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50"
           >
             <ProfileHoverName imageAlt={displayName}>
               {displayName}
