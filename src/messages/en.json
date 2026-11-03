@@ -301,6 +301,12 @@
   },
   "experience": [
     {
+      "title": "Senior Backend Engineer",
+      "company": "IMA Health",
+      "description": "Contribute to the migration of a hybrid AWS architecture toward a serverless approach.\nDesign, develop, and deploy scalable backend services and APIs using Node.js and NestJS, with OpenAPI contracts.\nImplement event-driven services on AWS, focusing on modularity, resilience, and cost efficiency.\nModel, integrate, and optimize MySQL and DynamoDB data to build maintainable, secure workflows.\nContribute to training and mentoring developers on the engineering team.",
+      "date": "01/09/2026 - Present"
+    },
+    {
       "title": "Tech Lead / Full Stack Engineer",
       "company": "Government of Ceres City",
       "description": "Led end-to-end citizen digital products: web platforms, backends, chatbots, and production integrations.\nSince February 2025, led the paperless transformation of tax services and developed electronic payment systems, generating $6,000,000 in annual savings.\nDeveloped a chatbot that centralized citizen inquiries and complaints, reducing phone calls and in-person support by 40% and becoming the government's official channel.\nMade architecture, frontend, backend, and operational decisions, prioritizing scalability and observability.\nTech Lead for a team of developers, responsible for daily coordination, sprint planning, code reviews, and technical mentoring.",
